@@ -1,0 +1,14 @@
+{
+  "name": "zenn-contents",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "ssh://git@github.com/serinuntius/zenn-contents.git",
+  "author": "serinuntius <wasab1gj@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "zenn-cli": "^0.1.73"
+  },
+  "scripts": {
+    "new": "zenn new:article"
+  }
+}
