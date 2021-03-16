@@ -9,6 +9,7 @@
     "zenn-cli": "^0.1.73"
   },
   "scripts": {
-    "new": "zenn new:article"
+    "new": "zenn new:article",
+    "preview": "zenn preview"
   }
 }
