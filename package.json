@@ -6,7 +6,7 @@
   "author": "serinuntius <wasab1gj@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "zenn-cli": "^0.1.73"
+    "zenn-cli": "^0.1.131"
   },
   "scripts": {
     "new": "zenn new:article",
