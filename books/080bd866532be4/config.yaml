@@ -1,7 +1,7 @@
 title: "RGBの薄い本"
 summary: "Bitcoinのスマートコントラクト「RGB」について手を動かしながら理解していきます。"
 topics: ["Bitcoin", "スマートコントラクト", "RGB"]
-published: false
+published: true
 price: 0 # 有料の場合200〜5000
 # 本に含めるチャプターを順番に並べましょう
 chapters:
