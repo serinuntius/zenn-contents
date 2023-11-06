@@ -1,0 +1,15 @@
+{
+  "plugins": {},
+  "filters": {
+    "comments": true
+  },
+  "rules": {
+    "preset-ja-technical-writing": {
+      "max": 120,
+      "no-exclamation-question-mark": false,
+      "sentence-length": false
+    },
+    "aws-service-name": true,
+    "preset-ja-spacing": true
+  }
+}
