@@ -2,6 +2,12 @@
   "plugins": {},
   "filters": {},
   "rules": {
-    "preset-ja-technical-writing": true
+    "preset-ja-technical-writing": {
+      "max": 120,
+      "no-exclamation-question-mark": false
+    },
+    "aws-service-name": true,
+    "preset-ja-spacing": true,
+    "preset-japanese": true
   }
 }
