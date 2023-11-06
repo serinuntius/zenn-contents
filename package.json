@@ -10,6 +10,12 @@
   },
   "scripts": {
     "new": "zenn new:article --publication-name noplan_inc",
-    "start": "zenn preview"
+    "start": "zenn preview",
+    "lint": "textlint **/*.md",
+    "lint:fix": "textlint --fix **/*.md"
+  },
+  "devDependencies": {
+    "textlint": "^13.3.3",
+    "textlint-rule-preset-ja-technical-writing": "^8.0.0"
   }
 }
