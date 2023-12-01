@@ -6,7 +6,7 @@
   "author": "serinuntius <wasab1gj@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "zenn-cli": "^0.1.148"
+    "zenn-cli": "^0.1.150"
   },
   "scripts": {
     "new": "zenn new:article --publication-name noplan_inc",
