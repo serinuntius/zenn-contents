@@ -1,5 +1,5 @@
 ---
-title: "GoogleのLLM「Gemeni Pro」を使ったSlack BotをCloudflare Workersで動かしてみる"
+title: "GoogleのLLM「Gemini Pro」を使ったSlack BotをCloudflare Workersで動かしてみる"
 emoji: "🐙"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["cloudflare", "edge", "cloudflareworkers", "geminipro"]
@@ -14,8 +14,8 @@ published_at: 2023-12-14
 こんにちは〜！皆様いかがお過ごしでしょうか？　no plan inc. CTOの [@serinuntius](https://twitter.com/_serinuntius) です。
 これは[no plan inc.の Advent Calendar 2023](https://qiita.com/advent-calendar/2023/noplan_inc)の14日目の記事です。
 
-ついにGemeni ProのAPIが使えるようになりました。
-GemeniとはGoogleが開発したマルチモーダル対応LLMです。
+ついにGemini ProのAPIが使えるようになりました。
+GeminiとはGoogleが開発したマルチモーダル対応LLMです。
 
 かなり無料枠がデカい && 超えてもかなり安いのでちょっとしたアプリケーションなら安心して動かせます。
 GAまでは無料で使えるみたいなので、とりあえずは試してみましょう。
