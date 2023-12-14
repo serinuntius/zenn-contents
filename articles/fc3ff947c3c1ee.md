@@ -2,7 +2,7 @@
 title: "GoogleのLLM「Gemini Pro」を使ったSlack BotをCloudflare Workersで動かしてみる"
 emoji: "🐙"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["cloudflare", "edge", "cloudflareworkers", "geminipro"]
+topics: ["cloudflare", "cloudflareworkers", "geminipro", "slackbot"]
 published: true
 publication_name: noplan_inc
 published_at: 2023-12-14
