@@ -12,7 +12,7 @@ published_at: 2023-12-14
 ## はじめに
 
 こんにちは〜！皆様いかがお過ごしでしょうか？　no plan inc. CTOの [@serinuntius](https://twitter.com/_serinuntius) です。
-これは[no plan inc.の Advent Calendar 2023](https://qiita.com/advent-calendar/2023/noplan_inc)の14日目の記事です。
+これは[no plan inc.の Advent Calendar 2023](https://qiita.com/advent-calendar/2023/noplan_inc)の15日目の記事です。
 
 ついにGemini ProのAPIが使えるようになりました。
 GeminiとはGoogleが開発したマルチモーダル対応LLMです。
