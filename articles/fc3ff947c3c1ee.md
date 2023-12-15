@@ -90,7 +90,14 @@ compatibility_date = "2023-12-06"
 ## `src/index.ts` を編集する
 
 とりあえずBotが正しく動くのか確認するために、公式のexampleをそのまま動かしてみる。
-微妙に型定義が足りてなかったりしたので、公式との差分も書いておきます。
+~~微妙に型定義が足りてなかったりしたので、公式との差分も書いておきます。~~
+
+`slack-cloudflare-workers` の作者様から以下のコメントをいただきました。
+
+>ちなみに ExecutionContext の型定義って wranlger のプロジェクトだと import なしで勝手に解決されるので、あえて slack-cloudflare-workers 側で便宜上定義しているものは import しないようにしてたりはします。まぁ、ただどっちでも問題はないと思いますが。https://zenn.dev/noplan_inc/articles/fc3ff947c3c1ee#comment-747ffffc99506f
+
+環境によって型追加は不要かもしれません。
+
 
 ```diff ts: src/index.ts
 - import { SlackApp, SlackEdgeAppEnv, isPostedMessageEvent } from "slack-cloudflare-workers";
