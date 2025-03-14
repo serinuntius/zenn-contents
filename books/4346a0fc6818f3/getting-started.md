@@ -2,30 +2,26 @@
 title: "Getting Started（はじめに）"
 ---
 
-# Mastraの始め方
+# Mastra開発への第一歩を踏み出そう！
 
-この章では、Mastraを使ったAIエージェント開発を始めるための環境構築と、基本的なプロジェクト構造について解説します。初めてMastraを使う方でも迷わずに開発を始められるよう、ステップバイステップで進めていきましょう。
+さあ、Mastraの世界へようこそ！これからあなたは「AIエージェントを作る」というエキサイティングな旅に出ます。少し難しく感じるかもしれませんが、心配無用！この章では誰でも安心して始められるよう、環境構築から丁寧に案内します。
+
+一緒にワクワクしながら準備を整えていきましょう。
 
 ## インストール
 
-Mastraは、Node.jsの環境で動作するTypeScriptフレームワークです。環境構築の前に、以下の準備が必要です：
+MastraはTypeScriptベースのフレームワークで、Node.jsの環境で動きます。まずは以下の準備をササッと済ませましょう。
 
-### 前提条件
+### 必要な環境を準備しよう
 
-- **Node.js**: バージョン20以上が必要です
-- **LLMプロバイダのAPIキー**: OpenAI、Anthropic、Google Geminiなどのいずれか
+- **Node.js**がインストールされていることを確認（まだの方は[こちら](https://nodejs.org/)から最新版をゲット！）
+- **LLMプロバイダのAPIキー**を準備（OpenAIのAPIキーがおすすめ！）
 
-Node.jsがまだインストールされていない場合は、[Node.js公式サイト](https://nodejs.org/)からダウンロードしてインストールしてください。
+準備はOK？それじゃあ早速Mastraをセットアップしましょう！
 
-### Mastraプロジェクトの作成
+### Mastraプロジェクトの作り方（超カンタン！）
 
-Mastraの開発環境を構築する最も簡単な方法は、公式のプロジェクト作成コマンドを使うことです。ターミナルで以下のコマンドを実行してください：
-
-```bash
-npx create-mastra@latest
-```
-
-または、npmやyarnを使う場合は以下のコマンドも利用できます：
+Mastraの開発環境を一瞬で立ち上げるために、公式の便利コマンドを使います。ターミナルで以下のどれかを入力しましょう。
 
 ```bash
 npm create mastra@latest
@@ -33,155 +29,70 @@ npm create mastra@latest
 yarn create mastra
 ```
 
-コマンドを実行すると、対話形式でプロジェクト設定を行うウィザードが起動します。以下の質問に答えていきましょう：
+すると、親切なウィザードが色々質問してきます。難しくないので楽しんで進めましょう。
 
-1. **プロジェクト名**: 好きな名前を入力します（例: `github-analyzer`）
-2. **インストールするコンポーネント**: 必要なものを選択します（初めての場合は「Agents」「Tools」「Workflows」すべてを選ぶことをおすすめします）
-3. **デフォルトで使うLLMプロバイダ**: 使いたいプロバイダを選びます（OpenAIがおすすめです）
-4. **サンプルコードを含めるか**: `Yes`を選ぶと、基本的なエージェントやツールのサンプルが自動生成されます
+1. **プロジェクト名を決定！** 好きな名前を決めちゃってください。
+2. **コンポーネントを選択**: 初心者の方は全部入りがオススメ！
+3. **LLMプロバイダの設定**: まずはOpenAIが手軽で便利。
+4. **サンプルコードを含める？**: 最初は「Yes」でサンプルを参考にしながら進めましょう。
 
-このウィザードにより、Mastra開発に必要なすべてのパッケージがインストールされ、基本的なプロジェクト構造が生成されます。
+これだけで、開発環境が整います！
 
 ### APIキーの設定
 
-プロジェクトが作成されたら、次にLLMプロバイダのAPIキーを設定します。プロジェクトディレクトリ内の`.env`ファイルを開き、以下のように自分のAPIキーを設定してください：
+プロジェクトが準備できたら、最後にAPIキーを設定しましょう。プロジェクト内の`.env`ファイルを開いて、自分のAPIキーを書き込んでください。
 
 ```
-# OpenAIを使用する場合
-OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
-
-# Anthropicを使用する場合
-ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxxxxxx
-
-# Google Geminiを使用する場合
-GOOGLE_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxx
+# OpenAIの例
+OPENAI_API_KEY=あなたのOpenAIキー
 ```
 
-セキュリティのため、APIキーはGitリポジトリにコミットしないよう注意してください。`.env`ファイルは通常、`.gitignore`に含まれていますが、念のため確認しておきましょう。
+絶対にGitHubなどにアップしないよう注意！`.env`はちゃんと`.gitignore`に含まれているはずですが、一応確認してくださいね。
 
-### 開発サーバーの起動
+### 開発サーバーを動かしてみよう
 
-APIキーの設定が完了したら、開発サーバーを起動してみましょう。プロジェクトディレクトリ内で以下のコマンドを実行します：
+準備が整ったら、さっそくMastraの開発サーバーを動かしてみましょう！ターミナルで次のコマンドを打つだけです。
 
 ```bash
 npm run dev
 ```
 
-すべて正常に設定されていれば、Mastraの開発サーバーが起動し、ローカル環境（デフォルトでは`http://localhost:4111`）にエージェント用のRESTエンドポイントが作成されます。
+すぐに`http://localhost:4111`が立ち上がり、エージェントがあなたを待っています。
 
-## プロジェクト構造
+## プロジェクト構造を攻略しよう
 
-Mastraプロジェクトの基本的なフォルダ・ファイル構成を理解することは、効率的な開発のために重要です。典型的なMastraプロジェクトは、以下のような構造になっています：
+Mastraプロジェクトを自由自在に使うためには、構造を把握することが重要です。まずはざっくりと構造を見てみましょう。
 
 ```
-my-mastra-project/
-├── .env              # 環境変数（APIキーなど）
-├── package.json      # 依存関係の定義
-├── tsconfig.json     # TypeScript設定
-├── src/             
-│   ├── mastra/       # Mastra関連のコード
-│   │   ├── index.ts  # メインのエントリーポイント
-│   │   ├── agents/   # エージェント定義
-│   │   ├── tools/    # カスタムツール
-│   │   ├── workflows/# ワークフロー定義
-│   │   └── rag/      # RAG（検索拡張生成）設定
-│   └── server/       # サーバー関連のコード
-├── public/          # 静的ファイル
-└── node_modules/    # インストールされたパッケージ
+プロジェクトルート/
+├── src/
+│   ├── mastra/
+│   │   ├── agents/
+│   │   ├── workflows/
+│   │   ├── tools/
+│   │   └── index.ts
+│   └── server/
+├── public/
+├── node_modules/
+├── .env
+├── package.json
+├── tsconfig.json
+└── tsconfig.json
 ```
 
-### 主要ディレクトリと役割
+### 各ディレクトリの役割
 
-それぞれのディレクトリやファイルの役割を詳しく見ていきましょう：
+- **agents/**: エージェントを定義します。AIにどんな仕事を任せたいか、ここで決まります。
+- **tools/**: エージェントが利用するツールをカスタムで作ります。API呼び出しやデータ処理など何でも可能！
+- **workflows/**: より複雑な処理の流れを組み立てます。
+- **index.ts**: ここでエージェントやワークフローをMastraに登録します。
 
-#### `src/mastra/index.ts`
+### サンプルコードをどんどん活用しよう！
 
-これはMastraアプリケーションのメインエントリーポイントです。ここでは、エージェント、ワークフロー、ツールなどを登録し、Mastraインスタンスを初期化します。基本的な構造は以下のようになっています：
+プロジェクトを作る時に「サンプルコードを含める」を選ぶと、基本的なコードが自動で付いてきます。これを参考に、あなたのオリジナルエージェントを作り始めてみましょう！
 
-```typescript
-import { Mastra } from "@mastra/core";
-import { myAgent } from "./agents/my-agent";
-import { myWorkflow } from "./workflows/my-workflow";
+## 次はいよいよ実践です！
 
-export const mastra = new Mastra({
-  agents: { myAgent },
-  workflows: { myWorkflow },
-});
-```
+これでMastra開発への扉が開きました！次の章では、実際にGitHubリポジトリを解析する面白くて実用的なエージェントを一緒に作ります。
 
-#### `src/mastra/agents/`
-
-このディレクトリには、各エージェントの定義ファイルが含まれます。エージェントは、AIモデル、指示（プロンプト）、使用するツールなどを指定して定義します。例えば：
-
-```typescript
-import { openai } from "@ai-sdk/openai";
-import { Agent } from "@mastra/core/agent";
-import { myTool } from "../tools/my-tool";
-
-export const myAgent = new Agent({
-  name: "My Agent",
-  instructions: "You are a helpful assistant...",
-  model: openai("gpt-4o-mini"),
-  tools: { myTool },
-});
-```
-
-#### `src/mastra/tools/`
-
-エージェントが使用するカスタムツール（関数）を定義するディレクトリです。ツールとは、エージェントが実行できる特定のタスクのことで、外部APIの呼び出しやデータ処理などが含まれます。
-
-```typescript
-import { createTool } from "@mastra/core/tools";
-
-export const myTool = createTool({
-  name: "myTool",
-  description: "This tool does something useful",
-  parameters: {
-    param1: { type: "string", description: "First parameter" }
-  },
-  execute: async ({ param1 }) => {
-    // ツールのロジックを実装
-    return { result: "Some result" };
-  }
-});
-```
-
-#### `src/mastra/workflows/`
-
-複雑なタスクを処理するためのワークフローを定義するディレクトリです。ワークフローは、複数のステップから構成され、それぞれのステップで特定の処理や判断を行います。
-
-```typescript
-import { Workflow } from "@mastra/core/workflow";
-
-export const myWorkflow = new Workflow({
-  name: "My Workflow",
-})
-  .step({
-    id: "step1",
-    execute: async (ctx) => {
-      // ステップ1の処理
-      return { output: "Step 1 result" };
-    }
-  })
-  .then({
-    id: "step2",
-    execute: async (ctx, { output }) => {
-      // ステップ2の処理
-      return { finalResult: output + " processed" };
-    }
-  });
-```
-
-#### `src/mastra/rag/`
-
-RAG（検索拡張生成）の設定を行うディレクトリです。ここでは、ドキュメントのチャンキング、埋め込み生成、ベクトルデータベースの設定などを行います。
-
-### サンプルコードの活用
-
-`create-mastra`コマンドでプロジェクトを作成する際に「サンプルコードを含める」オプションを選んだ場合、基本的なエージェントやツールのサンプルが生成されます。これらのサンプルコードを参照することで、Mastraの基本的な使い方を学ぶことができます。
-
-サンプルコードを理解し、少しずつカスタマイズしていくことで、自分のニーズに合ったAIエージェントを開発していくことができます。
-
-## 次のステップ
-
-これで、Mastraを使うための環境構築と基本的なプロジェクト構造の理解ができました。次の章では、実際に簡単なエージェントを作成し、その機能を拡張していく方法を学んでいきます。特に、GitHubリポジトリを解析するエージェントを例に、具体的な実装方法を解説していきます。 
+準備はOKですか？さぁ、エキサイティングなMastraの世界に飛び込みましょう！
