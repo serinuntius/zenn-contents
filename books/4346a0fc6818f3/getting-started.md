@@ -38,6 +38,81 @@ yarn create mastra
 
 これだけで、開発環境が整います！
 
+### 実際の設定の流れ
+
+実際にコマンドを実行すると、下記のようなインタラクティブなやり取りが始まります。ここでは最も一般的な選択肢を選んでいます：
+
+```
+npm create mastra@latest
+
+Need to install the following packages:
+create-mastra@0.1.9
+Ok to proceed? (y) y
+
+
+> npx
+> create-mastra
+
+┌  Mastra Create
+│
+◇  What do you want to name your project?
+│  github-cursor-rules-agent
+│
+◇  Project created
+│
+◇  npm dependencies installed
+│
+◇  mastra installed
+│
+◇  @mastra/core installed
+│
+◇  .gitignore added
+│
+└  Project created successfully
+
+
+┌  Mastra Init
+│
+◇  Where should we create the Mastra files? (default: src/)
+│  src/
+│
+◇  Choose components to install:
+│  Agents, Workflows
+│
+◇  Add tools?
+│  Yes
+│
+◇  Select default provider:
+│  OpenAI
+│
+◇  Enter your openai API key?
+│  Skip for now
+│
+◇  Add example
+│  Yes
+│
+◇  
+│
+◇   ─────────────────────────────────────────────────────────╮
+│                                                            │
+│                                                            │
+│        Mastra initialized successfully!                    │
+│                                                            │
+│        Add your OPENAI_API_KEY as an environment variable  │
+│        in your .env.development file                       │
+│                                                            │
+│                                                            │
+├────────────────────────────────────────────────────────────╯
+│
+└  
+   To start your project:
+
+    cd github-cursor-rules-agent
+    npm run dev
+```
+
+> **注意**: 上記のセットアップでは「Select default provider:」でOpenAIを選択していますが、**GoogleのGemini API（特にFlash 2.0モデル）**が実はコストパフォーマンスと速度の面で最もおすすめです。ただし、現在のMastraのセットアップウィザードではデフォルトでOpenAIが表示されると思います。この選択を行った後、プロジェクト内のコードを少し修正してGeminiに切り替えることをお勧めします。Geminiを使用するための設定は後ほど説明します。
+
 ### APIキーの設定
 
 プロジェクトが準備できたら、最後にAPIキーを設定しましょう。プロジェクト内の`.env`ファイルを開いて、自分のAPIキーを書き込んでください。
