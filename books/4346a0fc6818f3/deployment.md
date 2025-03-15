@@ -2,372 +2,784 @@
 title: "デプロイメント"
 ---
 
-# デプロイメント
+# AIエージェントを世界に届けよう：デプロイメントガイド 🚀
 
-Mastraで開発したAIエージェントやワークフローをテスト環境から本番環境へと移行し、実際のユーザーが利用できるようにするためのデプロイメント方法について解説します。この章では、Mastraアプリケーションのデプロイ方法、サーバー設定、ロギングとトレーシングの設定など、本番環境への移行に必要な知識を学びます。
+## デプロイメントの重要性 🌍
 
-## Mastraアプリケーションのデプロイ概要
+素晴らしいAIエージェントを開発したら、次はそれを世界中のユーザーが利用できるようにする段階です。デプロイメントとは、あなたの作ったエージェントを安全かつ効率的に公開環境で動作させるプロセスのことです。
 
-Mastraアプリケーションは主に2つの方法でデプロイできます：
+適切なデプロイメント戦略を選ぶことで、以下のメリットが得られます：
 
-1. **プラットフォーム直接デプロイ**: Cloudflare Workers、Vercel、Netlifyなどの特定プラットフォーム向けのデプロイヤーを使用
-2. **ユニバーサルデプロイ**: `mastra build`コマンドを使用して標準的なNode.jsサーバーを生成し、あらゆる環境で実行
+- **スケーラビリティ** 📈: ユーザー数が増えても安定して動作
+- **可用性** 🔄: 24時間365日、いつでも利用可能
+- **セキュリティ** 🔒: ユーザーデータと機密情報を保護
+- **パフォーマンス** ⚡: 応答時間の短縮と快適な体験の提供
+- **コスト効率** 💰: リソースを最適に活用
 
-### デプロイの前提条件
+この章では、Mastraエージェントを様々な環境にデプロイする方法を詳しく解説します。あなたのユースケースに最適なデプロイ戦略を見つけましょう！
 
-デプロイを始める前に、以下の準備が必要です：
+## デプロイメントの準備 🧰
 
-* Node.js（バージョン18以上推奨）がインストールされていること
-* プラットフォーム固有のデプロイヤーを使用する場合：
-  * 選択したプラットフォームのアカウント
-  * 必要なAPIキーや認証情報
+本番環境へのデプロイを始める前に、いくつかの準備が必要です。これらのステップを踏むことで、スムーズなデプロイメントが可能になります。
 
-## プラットフォーム直接デプロイ
+### 1. 環境変数の設定 🔐
 
-Mastraは、以下のプラットフォーム向けの特定デプロイヤーを提供しています：
-
-* **Cloudflare Workers**
-* **Vercel**
-* **Netlify**
-
-これらのデプロイヤーは、構成とデプロイプロセスを自動化し、プラットフォーム固有の機能を最大限に活用できるようにします。
-
-### デプロイヤーのインストール
-
-使用したいプラットフォームに応じてデプロイヤーをインストールします：
+本番環境では、APIキーなどの機密情報を環境変数として設定します。開発時に使用した`.env`ファイルの内容を、デプロイ先の環境変数として設定しましょう。
 
 ```bash
-# Cloudflare用
-npm install @mastra/deployer-cloudflare
-
-# Vercel用
-npm install @mastra/deployer-vercel
-
-# Netlify用
-npm install @mastra/deployer-netlify
+# 必要な環境変数の例
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-...
+DATABASE_URL=postgres://...
 ```
 
-### デプロイヤーの設定
+各デプロイメントプラットフォームには、環境変数を設定する専用のインターフェースがあります。
 
-エントリーファイル（通常は`src/mastra/index.ts`）でデプロイヤーを設定します：
+### 2. 依存関係の最適化 📦
 
-```typescript
-import { Mastra, createLogger } from '@mastra/core';
-import { CloudflareDeployer } from '@mastra/deployer-cloudflare';
-
-export const mastra = new Mastra({
-  agents: { /* エージェント設定 */ },
-  logger: createLogger({
-    name: 'MyApp',
-    level: 'debug'
-  }),
-  deployer: new CloudflareDeployer({
-    scope: 'your-cloudflare-account-id',
-    projectName: 'your-project-name',
-    // 詳細な設定オプションはリファレンスドキュメントを参照
-  }),
-});
-```
-
-### プラットフォーム別デプロイヤー設定
-
-各デプロイヤーには固有の設定オプションがあります。以下に基本的な例を示します：
-
-#### Cloudflareデプロイヤー
-
-```typescript
-new CloudflareDeployer({
-  scope: 'your-cloudflare-account-id',
-  projectName: 'your-project-name',
-});
-```
-
-#### Vercelデプロイヤー
-
-```typescript
-new VercelDeployer({
-  teamId: 'your-vercel-team-id',
-  projectName: 'your-project-name',
-  token: 'your-vercel-token'
-});
-```
-
-#### Netlifyデプロイヤー
-
-```typescript
-new NetlifyDeployer({
-  scope: 'your-netlify-team-slug',
-  projectName: 'your-project-name',
-  token: 'your-netlify-token'
-});
-```
-
-## ユニバーサルデプロイ
-
-MastraはスタンダードなNode.jsサーバーにビルドされるため、Node.jsアプリケーションを実行できるあらゆるプラットフォームにデプロイできます：
-
-* クラウドVM（AWS EC2、DigitalOcean Droplets、GCP Compute Engine）
-* コンテナプラットフォーム（Docker、Kubernetes）
-* Platform as a Service（Heroku、Railway）
-* 自己ホスト型サーバー
-
-### ビルドプロセス
-
-アプリケーションをビルドするには、以下のコマンドを実行します：
+本番環境では、不要な開発用パッケージを除外し、依存関係を最適化することが重要です。
 
 ```bash
-# カレントディレクトリからビルド
+# 本番用の依存関係のみをインストール
+npm ci --production
+
+# または
+yarn install --production
+```
+
+### 3. ビルドプロセスの実行 🏗️
+
+TypeScriptプロジェクトの場合、本番環境用にコードをコンパイルする必要があります。
+
+```bash
+# Mastra CLIを使ったビルド
 mastra build
 
-# または特定のディレクトリを指定
-mastra build --dir ./my-project
+# または
+npm run build
 ```
 
-ビルドプロセスは以下の手順で進行します：
+このコマンドは、TypeScriptコードをJavaScriptにコンパイルし、最適化された形で`dist`ディレクトリに出力します。
 
-1. エントリーファイル（`src/mastra/index.ts`または`src/mastra/index.js`）の特定
-2. `.mastra`出力ディレクトリの作成
-3. Rollupを使用したコードのバンドル化（ツリーシェイキングとソースマップ付き）
-4. [Hono](https://hono.dev/)ベースのHTTPサーバーの生成
+### 4. 環境固有の設定 ⚙️
 
-### サーバーの実行
+開発環境と本番環境で異なる設定を使い分けるために、環境変数`NODE_ENV`を活用します。
 
-ビルドされたHTTPサーバーを起動するには：
+```typescript
+// 環境に応じたモデル選択の例
+const modelProvider = process.env.NODE_ENV === 'production'
+  ? openai("gpt-4o")  // 本番環境では高性能モデル
+  : openai("gpt-3.5-turbo");  // 開発環境では経済的なモデル
+
+export const myAgent = new Agent({
+  // ...
+  model: modelProvider,
+});
+```
+
+## デプロイメントオプション 🌐
+
+Mastraエージェントは、様々なプラットフォームにデプロイできます。ここでは、主要なデプロイメントオプションとそれぞれの特徴を紹介します。
+
+### 1. Vercelへのデプロイ 🔼
+
+[Vercel](https://vercel.com/)は、フロントエンドアプリケーションとサーバーレス関数のデプロイに特化したプラットフォームです。特にNext.jsプロジェクトとの相性が良く、簡単な設定でMastraエージェントをデプロイできます。
+
+#### Vercelへのデプロイ手順
+
+1. **Vercel CLIのインストール**
 
 ```bash
-node .mastra/index.js
+npm install -g vercel
 ```
 
-## Mastraサーバーの設定
+2. **プロジェクトの設定**
 
-Mastraアプリケーションをデプロイすると、エージェント、ワークフロー、その他の機能をAPIエンドポイントとして公開するHTTPサーバーとして実行されます。
+プロジェクトルートに`vercel.json`ファイルを作成します：
 
-### サーバーアーキテクチャ
-
-Mastraは、基盤となるHTTPサーバーフレームワークとして[Hono](https://hono.dev/)を使用しています。`mastra build`コマンドでビルドすると、`.mastra`ディレクトリにHonoベースのHTTPサーバーが生成されます。
-
-このサーバーは以下を提供します：
-
-* 登録されたすべてのエージェント用のAPIエンドポイント
-* 登録されたすべてのワークフロー用のAPIエンドポイント
-* カスタムミドルウェアのサポート
-
-### サーバーミドルウェア
-
-Mastraでは、APIルートに適用するカスタムミドルウェア関数を設定できます。これは認証、ロギング、CORSなどのHTTPレベルの機能をAPIエンドポイントに追加するのに便利です。
-
-```typescript
-import { Mastra } from '@mastra/core';
-
-export const mastra = new Mastra({
-  // その他の設定オプション
-  serverMiddleware: [
+```json
+{
+  "version": 2,
+  "builds": [
     {
-      handler: async (c, next) => {
-        // 例：認証チェックを追加
-        const authHeader = c.req.header('Authorization');
-        if (!authHeader) {
-          return new Response('Unauthorized', { status: 401 });
-        }
-        // 次のミドルウェアまたはルートハンドラに進む
-        await next();
-      },
-      path: '/api/*', // オプション：指定しない場合、デフォルトは '/api/*'
-    },
+      "src": "dist/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
     {
-      handler: async (c, next) => {
-        // 例：リクエストロギングを追加
-        console.log(`${c.req.method} ${c.req.url}`);
-        await next();
-      },
-      // パスを指定しない場合、このミドルウェアはすべてのルートに適用される
+      "src": "/(.*)",
+      "dest": "dist/index.js"
     }
   ]
-});
-```
-
-#### 一般的なミドルウェアの使用例
-
-##### 認証
-
-```typescript
-{
-  handler: async (c, next) => {
-    const authHeader = c.req.header('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response('Unauthorized', { status: 401 });
-    }
-    const token = authHeader.split(' ')[1];
-    // ここでトークンを検証
-    await next();
-  },
-  path: '/api/*',
 }
 ```
 
-##### CORSサポート
+3. **デプロイの実行**
+
+```bash
+# ログインしてデプロイ
+vercel login
+vercel
+```
+
+4. **環境変数の設定**
+
+Vercelのダッシュボードから、必要な環境変数を設定します。
+
+### 2. AWS Lambdaへのデプロイ ☁️
+
+[AWS Lambda](https://aws.amazon.com/lambda/)は、サーバーレスコンピューティングサービスで、コードを実行するためのインフラストラクチャを管理することなく、関数をデプロイできます。
+
+#### AWS Lambdaへのデプロイ手順
+
+1. **AWS CLIのインストールと設定**
+
+```bash
+# AWS CLIのインストール
+pip install awscli
+
+# 認証情報の設定
+aws configure
+```
+
+2. **Serverless Frameworkのインストール**
+
+```bash
+npm install -g serverless
+```
+
+3. **serverless.yml の作成**
+
+プロジェクトルートに`serverless.yml`ファイルを作成します：
+
+```yaml
+service: mastra-agent
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    # その他の環境変数
+
+functions:
+  api:
+    handler: dist/lambda.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
+```
+
+4. **Lambda用のエントリーポイントの作成**
+
+`src/lambda.ts`ファイルを作成します：
 
 ```typescript
-{
-  handler: async (c, next) => {
-    // CORSヘッダーを追加
-    c.header('Access-Control-Allow-Origin', '*');
-    c.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    c.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
-    // プリフライトリクエストを処理
-    if (c.req.method === 'OPTIONS') {
-      return new Response(null, { status: 204 });
-    }
-    await next();
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { createServer } from '@mastra/core/server';
+import { myAgent } from './agent';
+
+const server = createServer({
+  agents: {
+    myAgent,
+  },
+});
+
+export const handler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  const path = event.path;
+  const method = event.httpMethod;
+  const headers = event.headers;
+  const body = event.body || '';
+
+  try {
+    const response = await server.handleRequest({
+      path,
+      method,
+      headers,
+      body,
+    });
+
+    return {
+      statusCode: response.status,
+      headers: response.headers,
+      body: response.body,
+    };
+  } catch (error) {
+    console.error('Error handling request:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Internal Server Error' }),
+    };
   }
-}
+};
 ```
 
-##### リクエストロギング
+5. **デプロイの実行**
+
+```bash
+serverless deploy
+```
+
+### 3. Google Cloud Functionsへのデプロイ 🌩️
+
+[Google Cloud Functions](https://cloud.google.com/functions)は、Googleのサーバーレスコンピューティングプラットフォームで、イベント駆動型の関数を実行できます。
+
+#### Google Cloud Functionsへのデプロイ手順
+
+1. **Google Cloud SDKのインストールと設定**
+
+```bash
+# Google Cloud SDKのインストール
+curl https://sdk.cloud.google.com | bash
+
+# 認証
+gcloud auth login
+```
+
+2. **Cloud Functions用のエントリーポイントの作成**
+
+`src/index.ts`ファイルを編集します：
 
 ```typescript
-{
-  handler: async (c, next) => {
-    const start = Date.now();
-    await next();
-    const duration = Date.now() - start;
-    console.log(`${c.req.method} ${c.req.url} - ${duration}ms`);
+import { createServer } from '@mastra/core/server';
+import { myAgent } from './agent';
+
+const server = createServer({
+  agents: {
+    myAgent,
+  },
+});
+
+export const mastraAgent = async (req: any, res: any) => {
+  try {
+    const response = await server.handleRequest({
+      path: req.path,
+      method: req.method,
+      headers: req.headers,
+      body: req.rawBody || '',
+    });
+
+    res.status(response.status);
+    Object.entries(response.headers).forEach(([key, value]) => {
+      res.set(key, value);
+    });
+    res.send(response.body);
+  } catch (error) {
+    console.error('Error handling request:', error);
+    res.status(500).send({ error: 'Internal Server Error' });
   }
-}
+};
 ```
 
-## ロギングとトレーシング
+3. **デプロイの実行**
 
-効果的なロギングとトレーシングは、アプリケーションの動作を理解するために不可欠です。特にAIエンジニアリングでは、トレーシングが重要です。Mastraのテレメトリ機能を使用すると、すべての実行のすべてのステップの入出力を可視化できます。
+```bash
+gcloud functions deploy mastraAgent \
+  --runtime nodejs18 \
+  --trigger-http \
+  --allow-unauthenticated
+```
 
-### ロギング
+### 4. Dockerコンテナでのデプロイ 🐳
 
-Mastraのログは、特定の関数がいつ実行されるか、どのような入力データを受け取るか、どのように応答するかなどの詳細を記録します。
+Dockerを使用すると、エージェントを任意の環境で一貫して実行できるコンテナ化されたアプリケーションとしてパッケージ化できます。
 
-#### 基本設定
+#### Dockerコンテナの作成と実行
 
-以下は、`INFO`レベルでコンソールロガーを設定する最小限の例です。これにより、情報メッセージ以上（つまり、`INFO`、`WARN`、`ERROR`）がコンソールに出力されます：
+1. **Dockerfileの作成**
+
+プロジェクトルートに`Dockerfile`を作成します：
+
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# 依存関係のインストール
+COPY package*.json ./
+RUN npm ci --production
+
+# アプリケーションのコピーとビルド
+COPY . .
+RUN npm run build
+
+# ポートの公開
+EXPOSE 3000
+
+# アプリケーションの起動
+CMD ["node", "dist/index.js"]
+```
+
+2. **Dockerイメージのビルドと実行**
+
+```bash
+# イメージのビルド
+docker build -t mastra-agent .
+
+# コンテナの実行
+docker run -p 3000:3000 \
+  -e OPENAI_API_KEY=sk-... \
+  -e OTHER_ENV_VAR=value \
+  mastra-agent
+```
+
+3. **Docker Composeの活用（オプション）**
+
+複数のサービスを組み合わせる場合は、`docker-compose.yml`ファイルを作成します：
+
+```yaml
+version: '3'
+
+services:
+  agent:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=postgres://postgres:password@db:5432/mastra
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mastra
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+実行するには：
+
+```bash
+docker-compose up
+```
+
+### 5. 従来のNode.jsサーバーでのデプロイ 🖥️
+
+従来のNode.jsサーバー（例：Express）を使用して、より細かい制御が必要な場合に適しています。
+
+#### Expressサーバーの設定
+
+1. **必要なパッケージのインストール**
+
+```bash
+npm install express cors
+```
+
+2. **サーバーファイルの作成**
+
+`src/server.ts`ファイルを作成します：
 
 ```typescript
-import { Mastra } from "@mastra/core";
-import { createLogger } from "@mastra/core/logger";
+import express from 'express';
+import cors from 'cors';
+import { createServer } from '@mastra/core/server';
+import { myAgent } from './agent';
 
-export const mastra = new Mastra({
-  // その他のMastra設定...
-  logger: createLogger({
-    name: "Mastra",
-    level: "info",
-  }),
+const app = express();
+const port = process.env.PORT || 3000;
+
+// ミドルウェアの設定
+app.use(cors());
+app.use(express.json());
+
+// Mastraサーバーの作成
+const mastraServer = createServer({
+  agents: {
+    myAgent,
+  },
+});
+
+// Mastraエンドポイントの設定
+app.use('/api', async (req, res) => {
+  try {
+    const response = await mastraServer.handleRequest({
+      path: req.path,
+      method: req.method,
+      headers: req.headers as Record<string, string>,
+      body: JSON.stringify(req.body),
+    });
+
+    res.status(response.status);
+    Object.entries(response.headers).forEach(([key, value]) => {
+      res.set(key, value);
+    });
+    res.send(response.body);
+  } catch (error) {
+    console.error('Error handling request:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 静的ファイルの提供（オプション）
+app.use(express.static('public'));
+
+// サーバーの起動
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
 ```
 
-この設定では：
-* `name: "Mastra"`はログをグループ化する名前を指定します。
-* `level: "info"`は記録するログの最小重要度を設定します。
+3. **サーバーの起動**
 
-### テレメトリ
+```bash
+# ビルド
+npm run build
 
-Mastraは、アプリケーションのトレースとモニタリングにOpenTelemetry Protocol（OTLP）をサポートしています。テレメトリが有効になると、Mastraはエージェント操作、LLM対話、ツール実行、統合呼び出し、ワークフロー実行、データベース操作などのすべてのコア機能を自動的にトレースします。
+# 起動
+node dist/server.js
+```
 
-#### 基本設定
+## 本番環境での最適化 ⚡
 
-テレメトリを有効にする簡単な例：
+デプロイ後のパフォーマンスと信頼性を向上させるために、以下の最適化を検討しましょう。
+
+### 1. キャッシュ戦略 🗃️
+
+頻繁に使用される情報をキャッシュすることで、レスポンス時間を短縮し、APIコストを削減できます。
 
 ```typescript
-export const mastra = new Mastra({
-  // ... その他の設定
-  telemetry: {
-    serviceName: "my-app",
-    enabled: true,
-    sampling: {
-      type: "always_on",
-    },
-    export: {
-      type: "otlp",
-      endpoint: "http://localhost:4318", // SigNoz ローカルエンドポイント
-    },
+import { createCache } from '@mastra/core/cache';
+
+// インメモリキャッシュの作成
+const memoryCache = createCache({
+  type: 'memory',
+  ttl: 3600, // 1時間
+});
+
+// Redisキャッシュの作成（より堅牢）
+const redisCache = createCache({
+  type: 'redis',
+  url: process.env.REDIS_URL,
+  ttl: 86400, // 24時間
+});
+
+// エージェント定義でキャッシュを使用
+export const myAgent = new Agent({
+  // ...
+  cache: process.env.NODE_ENV === 'production' ? redisCache : memoryCache,
+});
+```
+
+### 2. レート制限の実装 🚦
+
+APIプロバイダーのレート制限に達しないように、クライアントリクエストにレート制限を設定します。
+
+```typescript
+import rateLimit from 'express-rate-limit';
+
+// Expressミドルウェアとしてレート制限を設定
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分
+  max: 100, // IPアドレスごとに100リクエスト
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// APIルートにレート制限を適用
+app.use('/api', apiLimiter);
+```
+
+### 3. モニタリングとロギング 📊
+
+本番環境では、エージェントの動作を監視し、問題を早期に発見することが重要です。
+
+```typescript
+import winston from 'winston';
+
+// ロガーの設定
+const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
+
+// エージェントでロガーを使用
+export const myAgent = new Agent({
+  // ...
+  onError: (error) => {
+    logger.error('Agent error:', { error: error.message, stack: error.stack });
+  },
+  onGenerate: (result) => {
+    logger.info('Agent generated response', {
+      input: result.input.slice(0, 100),
+      output: result.output.slice(0, 100),
+      duration: result.duration,
+    });
   },
 });
 ```
 
-#### 環境変数による設定
+### 4. スケーリング戦略 📈
 
-環境変数を通じてOTLPエンドポイントとヘッダーを設定することもできます：
+ユーザー数の増加に対応するために、適切なスケーリング戦略を実装します。
 
+#### 水平スケーリング
+
+複数のサーバーインスタンスを実行し、ロードバランサーでトラフィックを分散します。
+
+```yaml
+# docker-compose.yml の例
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - agent1
+      - agent2
+
+  agent1:
+    build: .
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - INSTANCE_ID=1
+
+  agent2:
+    build: .
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - INSTANCE_ID=2
 ```
-OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
-OTEL_EXPORTER_OTLP_HEADERS=x-api-key=your-api-key
+
+#### 自動スケーリング
+
+クラウドプロバイダーの自動スケーリング機能を活用して、需要に応じてリソースを調整します。
+
+```bash
+# AWS Auto Scaling Groupの例
+aws autoscaling create-auto-scaling-group \
+  --auto-scaling-group-name mastra-agent-asg \
+  --launch-configuration-name mastra-agent-lc \
+  --min-size 2 \
+  --max-size 10 \
+  --desired-capacity 2 \
+  --vpc-zone-identifier "subnet-xxxxx,subnet-yyyyy"
 ```
 
-そして設定ファイルでは：
+## セキュリティのベストプラクティス 🔒
+
+AIエージェントをデプロイする際は、セキュリティを最優先に考える必要があります。
+
+### 1. APIキーの保護 🔑
+
+APIキーなどの機密情報は、環境変数として安全に管理します。
 
 ```typescript
-export const mastra = new Mastra({
-  // ... その他の設定
-  telemetry: {
-    serviceName: "my-app",
-    enabled: true,
-    export: {
-      type: "otlp",
-      // エンドポイントとヘッダーは環境変数から取得される
-    },
+// 直接コードに記述しない
+// ❌ const apiKey = "sk-...";
+
+// 環境変数から取得する
+// ✅ const apiKey = process.env.OPENAI_API_KEY;
+```
+
+### 2. 入力検証 ✅
+
+ユーザー入力を検証して、悪意のあるリクエストを防ぎます。
+
+```typescript
+import { z } from 'zod';
+
+// 入力スキーマの定義
+const inputSchema = z.object({
+  query: z.string().min(1).max(1000),
+  options: z.object({
+    temperature: z.number().min(0).max(1).optional(),
+  }).optional(),
+});
+
+// 入力の検証
+app.post('/api/query', (req, res) => {
+  try {
+    const validatedInput = inputSchema.parse(req.body);
+    // 検証済みの入力を使用
+    processQuery(validatedInput);
+  } catch (error) {
+    res.status(400).json({ error: 'Invalid input' });
+  }
+});
+```
+
+### 3. CORS設定 🌐
+
+Cross-Origin Resource Sharing (CORS) を適切に設定して、許可されたドメインからのみアクセスを許可します。
+
+```typescript
+import cors from 'cors';
+
+// すべてのオリジンを許可（開発環境）
+app.use(cors());
+
+// 本番環境では特定のオリジンのみ許可
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://yourdomain.com', 'https://app.yourdomain.com']
+    : '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+```
+
+### 4. コンテンツフィルタリング 🛡️
+
+ユーザーとエージェント間のやり取りを監視し、不適切なコンテンツをフィルタリングします。
+
+```typescript
+import { createContentFilter } from '@mastra/core/safety';
+
+const contentFilter = createContentFilter({
+  type: 'openai',
+  apiKey: process.env.OPENAI_API_KEY,
+  categories: ['hate', 'harassment', 'self-harm', 'sexual', 'violence'],
+  threshold: 'medium',
+});
+
+export const safeAgent = new Agent({
+  // ...
+  safety: {
+    inputFilter: contentFilter,
+    outputFilter: contentFilter,
   },
 });
 ```
 
-## 環境変数
+## 継続的インテグレーション/継続的デプロイメント (CI/CD) 🔄
 
-デプロイ時には、以下のような環境変数の設定が必要です：
+効率的な開発とデプロイメントのために、CI/CDパイプラインを構築しましょう。
 
-1. プラットフォームデプロイヤー変数（プラットフォームデプロイヤーを使用する場合）：
-   * プラットフォームの認証情報
+### GitHub Actionsを使ったCI/CD
 
-2. エージェントAPIキー：
-   * `OPENAI_API_KEY`
-   * `ANTHROPIC_API_KEY`
+`.github/workflows/deploy.yml`ファイルを作成します：
 
-3. サーバー設定（ユニバーサルデプロイ用）：
-   * `PORT`: HTTPサーバーポート（デフォルト: 3000）
-   * `HOST`: サーバーホスト（デフォルト: 0.0.0.0）
+```yaml
+name: Deploy Mastra Agent
 
-## デプロイのベストプラクティス
+on:
+  push:
+    branches: [ main ]
 
-Mastraアプリケーションを本番環境に効果的にデプロイするためのベストプラクティスをいくつか紹介します：
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm test
 
-### 1. セキュリティ対策
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run build
+      
+      # Vercelへのデプロイ例
+      - uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+```
 
-* 認証ミドルウェアを実装して、APIエンドポイントへの不正アクセスを防止
-* 環境変数を使用してAPIキーや機密情報を管理
-* HTTPS接続を強制
-* APIレート制限を実装して、過負荷やDoS攻撃から保護
+## デプロイメントのトラブルシューティング 🔧
 
-### 2. パフォーマンス最適化
+デプロイメント中に発生する可能性のある一般的な問題とその解決策を紹介します。
 
-* プロダクション環境ではロギングレベルを`info`または`warn`に設定
-* 必要なトレースだけをサンプリングして、テレメトリのオーバーヘッドを最小化
-* 長時間実行されるワークフローには非同期処理を使用
+### 1. 環境変数の問題
 
-### 3. 監視とアラート
+**症状**: エージェントが「API key not found」などのエラーを返す
 
-* テレメトリデータを監視システムに統合
-* 重要なエラーやパフォーマンス低下に関するアラートを設定
-* リソース使用量（メモリ、CPU、ネットワーク）を定期的に監視
+**解決策**:
+- デプロイ先の環境変数が正しく設定されているか確認
+- 環境変数の名前が正確か確認（大文字小文字も含む）
+- 秘密の環境変数が正しく暗号化されているか確認
 
-### 4. デプロイプロセス
+### 2. CORSエラー
 
-* CI/CDパイプラインを設定して自動デプロイを実現
-* デプロイ前にテストを実行して、問題を早期に発見
-* ブルー/グリーンデプロイメントまたはカナリアリリースを検討して、リスクを軽減
+**症状**: ブラウザコンソールに「Access-Control-Allow-Origin」エラーが表示される
 
-### 5. スケーリング
+**解決策**:
+- CORSミドルウェアが正しく設定されているか確認
+- 許可するオリジンリストにクライアントドメインが含まれているか確認
+- プリフライトリクエスト（OPTIONS）が正しく処理されているか確認
 
-* 需要に応じてアプリケーションを水平スケーリングできるアーキテクチャを採用
-* ステートレスな設計を維持し、分散システムとの互換性を確保
-* 外部サービス（データベースなど）のスケーリング計画も検討
+### 3. メモリ不足エラー
 
-## まとめ
+**症状**: サーバーが「Out of memory」エラーで停止する
 
-この章では、Mastraアプリケーションを本番環境にデプロイするための様々な方法と設定について学びました。プラットフォーム固有のデプロイヤーを使用する方法とユニバーサルデプロイ方法、サーバー設定のカスタマイズ、効果的なロギングとトレーシングの設定など、本番環境でのMastraアプリケーションの運用に必要な知識を解説しました。
+**解決策**:
+- サーバーのメモリ割り当てを増やす
+- 大きなリクエスト/レスポンスを適切に処理する
+- メモリリークがないか確認
 
-適切なデプロイ戦略と設定を選択することで、Mastraで開発したAIエージェントとワークフローが安定して高性能に動作し、ユーザーに価値を提供できるようになります。次の章では、Mastraアプリケーションの評価（Evals）について学び、AIエージェントのパフォーマンスを測定・改善する方法を探ります。 
+```bash
+# Node.jsのメモリ制限を増やす
+NODE_OPTIONS="--max-old-space-size=4096" node dist/index.js
+```
+
+### 4. タイムアウトエラー
+
+**症状**: 長時間実行されるリクエストがタイムアウトする
+
+**解決策**:
+- サーバーのタイムアウト設定を調整
+- 長時間実行される処理を非同期ジョブに分割
+- クライアント側でリトライロジックを実装
+
+```typescript
+// Expressのタイムアウト設定
+app.use((req, res, next) => {
+  res.setTimeout(120000, () => {
+    res.status(408).send('Request Timeout');
+  });
+  next();
+});
+```
+
+## まとめ：成功するデプロイメントの鍵 🗝️
+
+この章では、Mastraエージェントを様々な環境にデプロイするための包括的なガイドを提供しました。成功するデプロイメントのための重要なポイントを振り返りましょう：
+
+1. **適切なプラットフォームの選択**: ユースケースに合ったデプロイメントプラットフォームを選びましょう。
+2. **環境変数の管理**: 機密情報を安全に管理し、環境ごとに適切な設定を行いましょう。
+3. **パフォーマンスの最適化**: キャッシュ、レート制限、スケーリング戦略を実装して、パフォーマンスを向上させましょう。
+4. **セキュリティの確保**: 入力検証、CORS設定、コンテンツフィルタリングなどのセキュリティ対策を講じましょう。
+5. **CI/CDの活用**: 継続的インテグレーション/継続的デプロイメントを導入して、開発プロセスを効率化しましょう。
+
+適切なデプロイメント戦略を選択し、これらのベストプラクティスを実践することで、あなたのMastraエージェントは世界中のユーザーに安全かつ効率的にサービスを提供できるようになります。
+
+次の章では、デプロイしたエージェントのパフォーマンスを評価し、継続的に改善するための方法について学びましょう。あなたのAIエージェントが世界中で活躍する姿を想像してください！🌟 

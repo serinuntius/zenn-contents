@@ -4,9 +4,9 @@ title: "実際に簡単なエージェントを作ってみよう（ワークシ
 
 # GitHub解析エージェント開発ワークショップへようこそ！🚀
 
-前章で無事にMastraの環境構築とプロジェクト構造の把握ができましたね。素晴らしい！いよいよここからが本番、魔法のような体験の始まりです！この章では、あなたも簡単に作れる実用的なエージェントを一緒に開発しながら、Mastraの真の力を体感していきましょう。心配ありません、一歩一歩進めていくので、初心者の方でも大丈夫です！
+前章で無事にMastraの環境構築とプロジェクト構造の把握ができましたね。素晴らしい！いよいよここからが本番、実践的な体験の始まりです！この章では、あなたも簡単に作れる実用的なエージェントを一緒に開発しながら、Mastraの真の力を体感していきましょう。心配ありません、一歩一歩進めていくので、初心者の方でも大丈夫です！
 
-今回私たちが挑戦するのは、GitHubリポジトリを解析して、なんとCursor Rulesを自動で作ってくれる便利なエージェントです。難しそう？いいえ、そんなことありません！この冒険を一緒に楽しみながら、サクッと作り上げていきましょう。あなたも驚くほどシンプルに実装できますよ！
+今回私たちが挑戦するのは、GitHubリポジトリを解析して、なんとCursor Rulesを自動で作ってくれる便利なエージェントです。難しそう？いいえ、そんなことありません！この実践を一緒に楽しみながら、サクッと作り上げていきましょう。あなたも驚くほどシンプルに実装できますよ！
 
 ## GitHub Cursor Rules生成エージェントの概要 ✨
 
@@ -14,7 +14,7 @@ title: "実際に簡単なエージェントを作ってみよう（ワークシ
 
 ### エージェントの目的と機能
 
-このエージェントは、あなたのコーディング体験を劇的に向上させる魔法の杖のような存在です：
+このエージェントは、あなたのコーディング体験を劇的に向上させる優れたツールです：
 
 1. GitHubのリポジトリを**ワンクリックで**自動クローン
 2. リポジトリ内のコードを**賢く丁寧に**解析
@@ -28,25 +28,25 @@ title: "実際に簡単なエージェントを作ってみよう（ワークシ
 
 1. **退屈な作業が一瞬で完了**: 手動でコードベースを解析してCursor Rulesを作るって、正直めちゃくちゃ大変ですよね。でも心配無用！このエージェントがあれば、あなたはコーヒーを一口飲む間に完了します！☕
 
-2. **AIだからこそ見つける隠れた宝石**: 人間の目では見落としがちな細かなパターンや構造までAIが徹底分析。その結果、ダイヤモンドのように輝く高品質なCursor Rulesが生まれます。✨
+2. **AIだからこそ見つける隠れた宝石**: 人間の目では見落としがちな細かなパターンや構造までAIが徹底分析。その結果、非常に質の高いCursor Rulesが生まれます。✨
 
-3. **楽しく学べるMastraの魔法**: 「学ぶ」というより「冒険する」感覚で、Mastraの重要な機能（ツール、ワークフローなど）が自然と身につきます。気づいたら、あなたもMastra活用の達人に！🧙‍♂️
+3. **楽しく学べるMastraの機能**: 「学ぶ」というより「実践する」感覚で、Mastraの重要な機能（ツール、ワークフローなど）が自然と身につきます。気づいたら、あなたもMastra活用の達人に！👍
 
 4. **今日作って、今日から使える**: 作ったエージェントは理論上の産物ではなく、あなたの明日のコーディングを即座に支援する実用的なツールになります。効率化の恩恵をすぐに実感できますよ！🛠️
 
-さあ、エキサイティングな冒険の始まりです！一緒にこの素晴らしいエージェントを作り上げていきましょう！あなたのコーディング体験が劇的に変わる瞬間を、今から一緒に楽しみましょう！🚀
+さあ、エキサイティングな実践の始まりです！一緒にこの素晴らしいエージェントを作り上げていきましょう！あなたのコーディング体験が劇的に変わる瞬間を、今から一緒に楽しみましょう！🚀
 
 ## エージェントを作る: GitHubデータ取得と解析 🔍
 
-さあ、いよいよ本格的な実装に移ります！ワクワクしますね。ここからは魔法使いが呪文を唱えるように、GitHubリポジトリを自在に操るツールを一緒に作り上げていきましょう。難しく感じるかもしれませんが、一つ一つのステップは驚くほどシンプルなので、安心して冒険を続けてください！
+さあ、いよいよ本格的な実装に移ります！ワクワクしますね。ここからはGitHubリポジトリを自在に操るツールを一緒に作り上げていきましょう。難しく感じるかもしれませんが、一つ一つのステップは驚くほどシンプルなので、安心して実践を続けてください！
 
 ### 必要なツールの作成 🛠️
 
-私たちのエージェントには、いくつかの魔法の道具（ツール）が必要です。まるでヒーローが特殊装備を身につけるように、これからエージェントに力を与えていきましょう！Mastraの素晴らしい点は、Zodスキーマを使って入出力をキレイに型付けできることです。これによって、エージェントが「何を受け取り、何を返すのか」が一目瞭然になりますよ！
+私たちのエージェントには、いくつかの重要な道具（ツール）が必要です。まるでヒーローが特殊装備を身につけるように、これからエージェントに力を与えていきましょう！Mastraの素晴らしい点は、Zodスキーマを使って入出力をキレイに型付けできることです。これによって、エージェントが「何を受け取り、何を返すのか」が一目瞭然になりますよ！
 
 #### 1. GitHubリポジトリクローンツール ✨
 
-まずは第一の魔法の道具、「クローンツール」を作りましょう！このツールがあれば、GitHubの星（リポジトリ）をあなたのローカル宇宙に召喚できます。以下のコードを`src/mastra/tools/github-clone-tool.ts`として保存してみましょう。コードは少し長いように見えますが、各部分は非常にシンプルな役割を持っているので心配いりません！
+まずは第一の道具、「クローンツール」を作りましょう！このツールがあれば、GitHubのリポジトリをあなたのローカル環境に簡単に複製できます。以下のコードを`src/mastra/tools/github-clone-tool.ts`として保存してみましょう。コードは少し長いように見えますが、各部分は非常にシンプルな役割を持っているので心配いりません！
 
 ```typescript
 import { createTool } from "@mastra/core/tools";
@@ -523,40 +523,27 @@ export const cursorRulesGeneratorTool = createTool({
 
 ```typescript
 import { Agent } from "@mastra/core/agent";
-import { openai } from "@ai-sdk/openai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { githubCloneTool } from "../tools/github-clone-tool";
 import { repoAnalysisTool } from "../tools/repo-analysis-tool";
 import { cursorRulesGeneratorTool } from "../tools/cursor-rules-generator";
 
-export const githubAnalyzerAgent = new Agent({
-  name: "GitHub Analyzer Agent",
-  instructions: `You are a GitHub repository analyzer that helps users understand codebases and generate Cursor Rules.
+// Google Gemini AIプロバイダーの作成
+const google = createGoogleGenerativeAI({
+    apiKey: process.env.GOOGLE_API_KEY || "",
+});
 
-Your tasks:
-1. When given a GitHub repository URL, clone it using the githubCloneTool
-2. Analyze the repository structure and code using the repoAnalysisTool
-3. Summarize the repository structure, key features, and coding patterns
-4. Generate Cursor Rules in .mdc format using the cursorRulesGeneratorTool
-
-For Cursor Rules creation:
-- Focus on project-specific patterns, conventions, and best practices
-- Include helpful context about the codebase's organization
-- Format rules as markdown with clear descriptions
-- Structure information in a way that helps other developers understand the codebase quickly
-
-When analyzing the repository:
-- Look for common design patterns and architecture
-- Identify naming conventions and coding standards
-- Note important dependencies and how they're used
-- Understand the project's structure and organization
-
-Be thorough but concise in your analysis. Ask clarifying questions if needed.`,
-  model: openai("gpt-4o"),
-  tools: { 
+const gitHubAnalysisAgent = new Agent({
+  name: "GitHub Analysis Agent",
+  instructions: `あなたはGitHubリポジトリ解析の専門家です。
+  指定されたリポジトリを分析し、コードの内容とその目的を理解して、
+  効果的なCursor Rulesを生成することができます。`,
+  model: google.getGenerativeModel({ model: "gemini-2.0-flash" }),
+  tools: {
     githubCloneTool,
     repoAnalysisTool,
     cursorRulesGeneratorTool
-  },
+  }
 });
 ```
 
@@ -594,6 +581,6 @@ Please analyze this GitHub repository: https://github.com/facebook/react
 
 おめでとうございます！この章では、Mastraを使ったGitHub解析エージェントの開発を通して、実用的なスキルを身につけました。最初は難しそうに見えたかもしれませんが、一歩ずつ進めることで、あなたも立派なMastraエージェント開発者になりましたね！
 
-この冒険を通じて、ツールの作成、エージェントの定義、そして実際の動作確認まで、すべてのプロセスを体験することができました。これからも、この知識を活かして、あなただけの素晴らしいエージェントを生み出していってください。
+この実践を通じて、ツールの作成、エージェントの定義、そして実際の動作確認まで、すべてのプロセスを体験することができました。これからも、この知識を活かして、あなただけの素晴らしいエージェントを生み出していってください。
 
-次の章では、さらに高度なテクニックを学んでいきます。Mastraの世界はまだまだ広く、探検すべき場所がたくさんあります。引き続き、一緒に楽しい冒険を続けていきましょう！🚀 
+次の章では、さらに高度なテクニックを学んでいきます。Mastraの世界はまだまだ広く、探検すべき場所がたくさんあります。引き続き、一緒に楽しい実践を続けていきましょう！🚀 

@@ -2,27 +2,27 @@
 title: "Workflows（ワークフロー）"
 ---
 
-# ワークフローの魔法を極めよう！ 🧙‍♂️✨
+# ワークフローの力を極めよう！ 🔄✨
 
-前章ではMastraエージェントの基本構成要素や機能という、魔法の材料について学びましたね！素晴らしい進歩です。これらの知識を武器に、今回はさらに一歩進んで、エージェントに具体的な魔法の詠唱手順を教える「ワークフロー」について探検していきましょう。まるで魔法使いが呪文の詠唱順序を決めるように、エージェントの行動パターンを設計できるようになりますよ！
+前章ではMastraエージェントの基本構成要素や機能という、重要な基礎知識について学びましたね！素晴らしい進歩です。これらの知識を武器に、今回はさらに一歩進んで、エージェントに具体的な行動手順を教える「ワークフロー」について探検していきましょう。エージェントの行動パターンを自在に設計できるようになりますよ！
 
-## ワークフローの概要 - 魔法の設計図 📜
+## ワークフローの概要 - 処理の設計図 📜
 
-ワークフローとは、エージェントが実行すべき処理の流れを構造化して定義した、いわば「魔法の地図」のようなものです。冒険で言えば、「まずドラゴンの洞窟に行って、次に宝箱を見つけて、最後に村に戻る」といった具体的な行程表のようなもの。複雑な冒険を小さなミッションに分解し、それらをどのような順序や条件で実行するかを明確に指示できるんです！
+ワークフローとは、エージェントが実行すべき処理の流れを構造化して定義した、いわば「行動の地図」のようなものです。旅で言えば、「まず駅に行って、次にホテルを探して、最後に観光地に向かう」といった具体的な行程表のようなもの。複雑なタスクを小さなステップに分解し、それらをどのような順序や条件で実行するかを明確に指示できるんです！
 
 ### なぜワークフローが必要なのか 🤔
 
-エージェントは単純な魔法（タスク）であれば単体で十分対応できますが、以下のような場合には、ワークフローという魔法の設計図が非常に役立ちます：
+エージェントは単純なタスクであれば単体で十分対応できますが、以下のような場合には、ワークフローという設計図が非常に役立ちます：
 
-1. **複雑な魔法の分解** 🧩: 大きな呪文を小さな詠唱ステップに分割することで、魔法が管理しやすくなります
-2. **魔法の分岐点の実現** 🌳: 「もし〇〇なら□□の魔法、そうでなければ△△の魔法」という状況判断ができます
-3. **魔力の受け渡し** 💫: ステップ間で魔力（データ）をスムーズに受け渡せます
-4. **魔法の失敗対策** 🛡️: 呪文詠唱中の事故を適切に捕捉し対応できます
-5. **同時詠唱** ⚡: 独立した魔法を同時に詠唱することで効率アップ！
+1. **複雑な処理の分解** 🧩: 大きなタスクを小さなステップに分割することで、処理が管理しやすくなります
+2. **処理の分岐点の実現** 🌳: 「もし〇〇なら□□の処理、そうでなければ△△の処理」という状況判断ができます
+3. **データの受け渡し** 💫: ステップ間でデータをスムーズに受け渡せます
+4. **エラー対策** 🛡️: 処理中の問題を適切に捕捉し対応できます
+5. **並列処理** ⚡: 独立したタスクを同時に実行することで効率アップ！
 
-冒険で例えるなら、「雨が降ったら傘を持って行く」「敵が多いなら仲間を呼ぶ」などの状況に応じた計画が立てられるということです。賢い冒険者になるための必須スキルですね！
+旅行で例えるなら、「雨が降ったら傘を持って行く」「混雑している場合は別のルートを選ぶ」などの状況に応じた計画が立てられるということです。賢い旅行者になるための必須スキルですね！
 
-### ワークフローの基本構造 - 魔法の骨組み 🧠
+### ワークフローの基本構造 - 処理の骨組み 🧠
 
 Mastraのワークフローは以下の要素から構成されます。ちょっと見てみましょう！
 
@@ -52,11 +52,11 @@ const stepOne = new Step({
 myWorkflow.step(stepOne).commit();
 ```
 
-このコードは少し複雑に見えるかもしれませんが、心配いりません！基本的には「ワークフロー」という冒険の大まかな計画を立て、その中に「ステップ」という個別のミッションを設定しているだけなんです。`triggerSchema`はこの冒険に必要な装備品リスト、`Step`オブジェクトは冒険の各立ち寄りポイントで何をするかを記した指示書のようなものですね！✨
+このコードは少し複雑に見えるかもしれませんが、心配いりません！基本的には「ワークフロー」という旅の大まかな計画を立て、その中に「ステップ」という個別の立ち寄りポイントを設定しているだけなんです。`triggerSchema`はこの旅に必要な情報リスト、`Step`オブジェクトは旅の各立ち寄りポイントで何をするかを記した指示書のようなものですね！✨
 
-## ステップの定義 - 魔法のレシピを書く 📝
+## ステップの定義 - 処理レシピを書く 📝
 
-ステップはワークフローの最小実行単位、言わば魔法のレシピの1ステップです。「卵を割る」「小麦粉を入れる」のような、魔法のレシピの各手順をステップとして定義していきます。
+ステップはワークフローの最小実行単位、言わば処理レシピの1ステップです。「卵を割る」「小麦粉を入れる」のような、レシピの各手順をステップとして定義していきます。
 
 ### ステップの基本構造 - レシピの書き方 🍳
 
@@ -92,9 +92,9 @@ const processDataStep = new Step({
 
 このように考えると、プログラミングも料理も似ていて、ステップバイステップで美味しい結果を生み出すんですね！🍽️
 
-### エージェントを呼び出すステップ - 魔法使いに協力を求める 🧚‍♀️
+### エージェントを呼び出すステップ - 専門家に協力を求める 🧚‍♀️
 
-ワークフロー内から別の魔法使い（エージェント）を呼び出すステップを定義することもできます。まるで冒険中に専門家の助けを借りるようなものですね：
+ワークフロー内から別のエージェントを呼び出すステップを定義することもできます。まるで旅行中に専門家の助けを借りるようなものですね：
 
 ```typescript
 import { Step, Agent } from "@mastra/core";
@@ -127,15 +127,15 @@ const generateContentStep = new Step({
 });
 ```
 
-このステップでは、「私には文章を書くのが苦手だから、文章の得意な友達に手伝ってもらおう！」というようなことをやっています。冒険の途中で賢者に相談するようなものですね。ワークフローの中で専門家（エージェント）の助けを借りることで、より素晴らしい結果が得られます！🌟
+このステップでは、「私には文章を書くのが苦手だから、文章の得意な友達に手伝ってもらおう！」というようなことをやっています。旅行の途中で専門のガイドに相談するようなものですね。ワークフローの中で専門家（エージェント）の助けを借りることで、より素晴らしい結果が得られます！🌟
 
-## 制御フロー - 魔法の道筋を設計する 🗺️
+## 制御フロー - 処理の道筋を設計する 🗺️
 
-ワークフローの処理の流れをコントロールするための仕組み、つまり魔法の道筋をどう設計するかについて見ていきましょう。冒険における進路選択のようなものです！
+ワークフローの処理の流れをコントロールするための仕組み、つまり処理の道筋をどう設計するかについて見ていきましょう。旅行における進路選択のようなものです！
 
 ### 順次実行 - まっすぐな道を進む 🚶‍♂️
 
-最も基本的な制御フローは、ステップを順番に実行すること。いわば「まずAの村に行って、次にBの洞窟に行って、最後にCの山に登る」という直線的な冒険ルートです：
+最も基本的な制御フローは、ステップを順番に実行すること。いわば「まずAの場所に行って、次にBの場所に行って、最後にCの場所に行く」という直線的な旅行ルートです：
 
 ```typescript
 myWorkflow.step(stepOne).then(stepTwo).then(stepThree).commit();
@@ -143,19 +143,19 @@ myWorkflow.step(stepOne).then(stepTwo).then(stepThree).commit();
 
 読み方は簡単！「stepOneをやって、それからstepTwoをやって、最後にstepThreeをやる」というだけです。シンプルですね！😊
 
-### 並列実行 - 魔法の多重詠唱 👯‍♂️
+### 並列実行 - 処理の同時進行 👯‍♂️
 
-独立したタスクを同時に実行する場合は、「分身の術」のように2つのことを同時に進めることができます：
+独立したタスクを同時に実行する場合は、「分担作業」のように2つのことを同時に進めることができます：
 
 ```typescript
 myWorkflow.step(fetchUserData).step(fetchOrderData);
 ```
 
-これは「ユーザーデータを取得しながら、同時に注文データも取得する」という指示。まるで「Aさんは村へ食料を買いに行って、Bさんは同時に森へ薬草を集めに行く」という作戦ですね！時間の節約にもなります。⏱️
+これは「ユーザーデータを取得しながら、同時に注文データも取得する」という指示。まるで「Aさんは食料を買いに行って、Bさんは同時に宿を予約する」という作戦ですね！時間の節約にもなります。⏱️
 
-### 条件分岐 - 魔法の分かれ道 🔍
+### 条件分岐 - 処理の分かれ道 🔍
 
-魔法の道が二股に分かれた時、どちらへ進むか？条件に基づいて異なる魔法を使い分けるには、`branch`メソッドを使用します：
+処理の道が二股に分かれた時、どちらへ進むか？条件に基づいて異なる処理を選択するには、`branch`メソッドを使用します：
 
 ```typescript
 import { Step, Workflow } from "@mastra/core";
@@ -198,11 +198,11 @@ branchingWorkflow
   .commit();
 ```
 
-この例は「もし技術系の冒険者が来たら技術マップを渡し、ビジネス系の冒険者が来たらビジネスマップを渡す」という案内所のような仕組み。相手に合わせた対応ができる賢い魔法ですね！🧠
+この例は「もし技術系の訪問者が来たら技術的な資料を渡し、ビジネス系の訪問者が来たらビジネス向け資料を渡す」という案内所のような仕組み。相手に合わせた対応ができる賢い仕組みですね！🧠
 
-### 条件付きループ - 魔法の繰り返し 🔄
+### 条件付きループ - 処理の繰り返し 🔄
 
-「目標達成するまで繰り返し呪文を唱える」というような、条件に基づいてステップを繰り返し実行する魔法。`until`または`while`メソッドを使うとこんな技も使えます：
+「目標達成するまで繰り返し処理を行う」というような、条件に基づいてステップを繰り返し実行する技術。`until`または`while`メソッドを使うとこんなこともできます：
 
 ```typescript
 // 値が10以上になるまでステップを繰り返す
@@ -228,9 +228,9 @@ workflow
   .then(finalStep);
 ```
 
-これは「宝箱が開くまで鍵を回し続ける」ような魔法です。目標達成（値が10以上）になるまで、同じ魔法（incrementStep）を繰り返し唱えます。根気強い魔法使いになれますね！🔑
+これは「目的地に着くまでナビの指示に従って進み続ける」ような処理です。目標達成（値が10以上）になるまで、同じ処理（incrementStep）を繰り返します。根気強い作業ですね！🔑
 
-`while`メソッドは別の書き方。こちらは「条件が真である間、ステップを繰り返す」という魔法です：
+`while`メソッドは別の書き方。こちらは「条件が真である間、ステップを繰り返す」という処理です：
 
 ```typescript
 workflow
@@ -243,436 +243,273 @@ workflow
   .then(finalStep);
 ```
 
-「体力がある間は走り続ける」というような感じですね。体力（値）が10未満の間は走り（incrementStep）続けます。この違いを理解すると、もっと柔軟な魔法が使えるようになりますよ！🏃‍♂️
+「体力がある間は走り続ける」というような感じですね。体力（値）が10未満の間は走り（incrementStep）続けます。この違いを理解すると、もっと柔軟な処理が設計できるようになりますよ！🏃‍♂️
 
-## データの流れ - 魔法のエネルギー循環 💫
+## データの流れ - 情報の循環 💫
 
-ワークフロー内での魔力（データ）の受け渡しは、エージェントシステムの重要な側面です。まるで魔法使い同士が魔力を受け渡すような、美しい連携プレイの秘密を紐解きましょう！
+ワークフロー内でのデータの受け渡しは、エージェントシステムの重要な側面です。データがステップ間でどのように流れるかを見ていきましょう！
 
-### ステップ間でのデータ受け渡し - 魔力のバトン 🏁
+### ステップ間のデータ共有 - 情報のバケツリレー 🪣
 
-前のステップの魔法の結果（出力）を次のステップの材料（入力）として使うことができます：
-
-```typescript
-// データ取得ステップ
-const fetchDataStep = new Step({
-  id: "fetchData",
-  execute: async () => {
-    // データ取得処理
-    return { data: "取得したデータ" };
-  },
-});
-
-// データ処理ステップ
-const processDataStep = new Step({
-  id: "processData",
-  execute: async ({ context }) => {
-    // 前のステップからデータを取得
-    const data = context.machineContext?.getStepPayload("fetchData")?.data;
-    // データ処理
-    return { processedData: `加工済み: ${data}` };
-  },
-});
-
-// ワークフローにステップを追加
-myWorkflow.step(fetchDataStep).then(processDataStep).commit();
-```
-
-これは「Aさんが集めた材料をBさんが料理する」というチームワーク。`fetchDataStep`で材料（データ）を集めて、その材料を`processDataStep`で料理（処理）しています。`getStepPayload`というメソッドで、前のステップの成果物を受け取ることができるんです。まるでバトンリレーのようですね！🏃‍♀️🏃‍♂️
-
-### 変数マッピング - 魔法の設計図を明確に 🗺️
-
-より明示的なデータの受け渡し、つまり「この材料はこっちに、あの材料はあっちに」と明確に指示するには、変数マッピングが便利です：
-
-```typescript
-// 変数マッピングを使用したデータの受け渡し
-workflow
-  .step(fetchDataStep)
-  .then(processDataStep, {
-    variables: {
-      // fetchDataStepの出力dataをprocessDataStepの入力dataにマッピング
-      inputData: { step: fetchDataStep, path: 'data' }
-    }
-  })
-  .commit();
-```
-
-このやり方だと「Aステップの〇〇という結果を、Bステップの□□という材料として使う」と明示的に指定できます。魔法の設計図がより明確になるので、複雑な魔法でも混乱しにくくなりますよ！😉
-
-## 変数 - 魔法の記憶術 💭
-
-ワークフロー内で変数という「メモ」を使うことで、異なるステップ間で情報を共有したり、計算結果を保存したりできます。まるで冒険中のメモ帳のような存在です！
-
-### ワークフロー変数の使用 - 冒険の記録をつける 📒
+ワークフロー内の各ステップは、前のステップの出力を入力として利用できます。まるでバケツリレーのように、データを次々と受け渡していくのです：
 
 ```typescript
 import { Step, Workflow } from "@mastra/core";
+
+// ステップ1: 名前を加工
+const formatNameStep = new Step({
+  id: "formatName",
+  execute: async ({ context }) => {
+    const name = context.machineContext?.triggerData?.name || "名無し";
+    return { formattedName: name.toUpperCase() };
+  },
+});
+
+// ステップ2: 挨拶を生成
+const createGreetingStep = new Step({
+  id: "createGreeting",
+  execute: async ({ context }) => {
+    // 前のステップの結果を取得
+    const formattedName = context.getStepResult(formatNameStep)?.formattedName;
+    return { greeting: `こんにちは、${formattedName}さん！` };
+  },
+});
+
+// ワークフローの定義
+const greetingWorkflow = new Workflow({ name: "greeting-workflow" });
+greetingWorkflow.step(formatNameStep).then(createGreetingStep).commit();
+```
+
+「うわっ、これ少し複雑...」と感じるかもしれませんが、実は単純な流れです。「名前を大文字に変換して」→「それを使って挨拶文を作る」というだけのことです。前のステップの結果を`context.getStepResult()`で取得できるのがポイントです！
+
+### ワークフローの入出力 - 処理の始まりと終わり 🔄
+
+ワークフローは外部から入力を受け取り、最終的な結果を出力します。この入出力の流れは、関数やAPIと同じような仕組みです：
+
+```typescript
+import { Workflow } from "@mastra/core";
 import { z } from "zod";
 
-const variableWorkflow = new Workflow({
-  name: "variable-workflow",
+// ワークフローの入力スキーマを定義
+const simpleWorkflow = new Workflow({
+  name: "simple-workflow",
   triggerSchema: z.object({
-    userName: z.string(),
+    name: z.string().describe("ユーザー名"),
+    age: z.number().describe("年齢"),
   }),
 });
 
-// 変数を設定するステップ
-const setVariableStep = new Step({
-  id: "setVariable",
-  execute: async ({ context }) => {
-    const userName = context.machineContext?.triggerData?.userName;
-    
-    // 変数を設定
-    context.machineContext?.setVariable("greeting", `こんにちは、${userName}さん！`);
-    return {};
-  },
+// 処理ステップを追加...
+
+// ワークフローを実行
+const result = await simpleWorkflow.trigger({
+  name: "山田太郎",
+  age: 30,
 });
 
-// 変数を使用するステップ
-const useVariableStep = new Step({
-  id: "useVariable",
-  execute: async ({ context }) => {
-    // 変数を取得
-    const greeting = context.machineContext?.getVariable("greeting");
-    return { message: `${greeting} 今日はどうですか？` };
-  },
-});
-
-// ワークフローにステップを追加
-variableWorkflow.step(setVariableStep).then(useVariableStep).commit();
+console.log("ワークフロー結果:", result);
 ```
 
-これは「冒険者の名前をメモしておいて、後で挨拶する」というシナリオ。`setVariableStep`で冒険者の名前に基づいた挨拶文を変数（メモ）として保存し、後の`useVariableStep`でそのメモを取り出して使っています。冒険の途中で「そういえば最初に聞いた名前は...」と思い出せる魔法ですね！📝
+ワークフローは明確な「入口」と「出口」を持っていて、入力データの形式を`triggerSchema`で定義し、最終的な結果はワークフローの実行結果として返されます。API設計とよく似ていますね！
 
-## 一時停止と再開 - 魔法の休憩と復帰 ⏸️▶️
+### コンテキスト - 処理の記憶 🧠
 
-長い魔法詠唱の途中で休憩が必要になったり、外部からの入力を待つ必要があったりする場合、一時停止と再開の機能が便利です。まるで「続きはまた明日」と冒険を一時中断するようなものですね。
+ワークフローが実行されている間、すべてのデータは「コンテキスト」というメモリに保存されます。このコンテキストには以下のようなデータが含まれます：
 
-### ワークフローの一時停止 - 魔法の休憩時間 ⏸️
+1. **triggerData** - ワークフロー起動時の入力データ
+2. **各ステップの結果** - 既に実行されたステップの出力
+3. **システム情報** - タイムスタンプ、実行IDなど
 
-```typescript
-import { Step, Workflow } from "@mastra/core";
-import { z } from "zod";
-
-const suspendableWorkflow = new Workflow({
-  name: "suspendable-workflow",
-  triggerSchema: z.object({
-    initialData: z.string(),
-  }),
-});
-
-// 最初のステップ
-const initialStep = new Step({
-  id: "initialStep",
-  execute: async ({ context }) => {
-    const initialData = context.machineContext?.triggerData?.initialData;
-    return { processedData: `処理開始: ${initialData}` };
-  },
-});
-
-// ワークフローを一時停止するステップ
-const suspendStep = new Step({
-  id: "suspendStep",
-  execute: async ({ context, suspend }) => {
-    // ワークフローを一時停止
-    await suspend({
-      reason: "ユーザー入力待ち",
-      data: { lastState: "初期処理完了" }
-    });
-    
-    return {};
-  },
-});
-
-// 一時停止後に実行されるステップ
-const resumeStep = new Step({
-  id: "resumeStep",
-  execute: async ({ context }) => {
-    // 一時停止時のデータと再開時のデータを取得
-    const suspendData = context.machineContext?.getSuspendData();
-    const resumeData = context.machineContext?.getResumeData();
-    
-    return { 
-      finalResult: `一時停止前の状態: ${suspendData?.lastState}, 再開時の入力: ${resumeData?.userInput}` 
-    };
-  },
-});
-
-// ワークフローにステップを追加
-suspendableWorkflow
-  .step(initialStep)
-  .then(suspendStep)
-  .then(resumeStep)
-  .commit();
-```
-
-この例では「魔法を途中まで詠唱して、いったん休憩し、ユーザーからの入力を待ってから再開する」という高度な魔法を使っています。`suspendStep`で「ちょっと待って、次に進む前にユーザーの意見が必要！」と一時停止し、入力を待ちます。その後、ワークフローが再開されると、`resumeStep`が「さて、休憩前は何をしていたっけ？新しい情報は？」と確認して処理を続行します。長い冒険の途中で一休みするような感覚ですね！☕
-
-### ワークフローの再開 - 魔法の復帰 ▶️
-
-一時停止した魔法を再開するには、`resume`メソッドという「さあ、続きをやろう！」の呪文を使います：
+以下のように、様々な方法でコンテキストにアクセスできます：
 
 ```typescript
-// 一時停止したワークフローを再開
-await workflow.resume({
-  runId: run.runId,
-  stepId: 'suspendStep',
-  context: {
-    userInput: 'ユーザーからの入力データ'
-  }
-});
-```
-
-また、ワークフローの状態を監視して自動的に再開処理を行うこともできます。「休憩時間が終わったら自動的に仕事に戻る」ような便利な魔法です：
-
-```typescript
-// ワークフローの監視と再開
-workflow.watch(async ({ context, activePaths }) => {
-  for (const path of activePaths) {
-    const suspendStepStatus = context.steps?.suspendStep?.status;
-    if (suspendStepStatus === 'suspended') {
-      console.log("ワークフローが一時停止しました。再開します。");
-      // 新しいコンテキストでワークフローを再開
-      await workflow.resume({
-        runId,
-        stepId: 'suspendStep',
-        context: { userInput: '自動生成された入力' },
-      });
-    }
-  }
-});
-```
-
-これは「魔法が中断されたら自動的に検知して、必要な材料を補充して再開する」というような監視魔法です。とても便利ですね！🔍
-
-## 動的ワークフロー - 進化する魔法の設計図 🌱
-
-状況に応じてワークフローの構造自体が変化する、生きた魔法の設計図のような動的ワークフローも作成できます。まるで冒険の途中で地図そのものが変化するような、高度な魔法です！
-
-### 動的ステップの生成 - 魔法のレシピを即興で作る 💫
-
-```typescript
-import { Step, Workflow } from "@mastra/core";
-import { z } from "zod";
-
-const dynamicWorkflow = new Workflow({
-  name: "dynamic-workflow",
-  triggerSchema: z.object({
-    steps: z.array(z.string()),
-  }),
-});
-
-// 動的にステップを生成する初期ステップ
-const generateStepsStep = new Step({
-  id: "generateSteps",
-  execute: async ({ context }) => {
-    const stepNames = context.machineContext?.triggerData?.steps || [];
-    
-    // 動的なステップIDリストを返す
-    return { dynamicStepIds: stepNames.map(name => `dynamic-${name}`) };
-  },
-});
-
-// 生成されたステップIDに基づいて実行するステップ
-const executeGeneratedSteps = new Step({
-  id: "executeGenerated",
-  execute: async ({ context }) => {
-    const dynamicStepIds = context.machineContext?.getStepPayload("generateSteps")?.dynamicStepIds || [];
-    const results = {};
-    
-    // 各動的ステップIDに対応する処理を実行
-    for (const stepId of dynamicStepIds) {
-      // 実際には、ここで各ステップに応じた処理を実行
-      results[stepId] = `${stepId}の処理結果`;
-    }
-    
-    return { results };
-  },
-});
-
-// ワークフローにステップを追加
-dynamicWorkflow
-  .step(generateStepsStep)
-  .then(executeGeneratedSteps)
-  .commit();
-```
-
-これは「冒険の計画を立てる段階で、どんな立ち寄り先が必要かリストアップし、そのリストに基づいて実際の旅程を組み立てる」というような魔法です。入力データに基づいて動的にステップを生成し、それらのステップに対応する処理を実行しています。臨機応変に対応できる柔軟な魔法使いの証ですね！🌟
-
-### ワークフローファクトリ - 魔法工房での即興創作 🏭
-
-さらに高度な例として、実行時に全く異なるワークフローをその場で設計する「魔法工房」のような機能も実装できます：
-
-```typescript
-// 動的ワークフロー生成ステップ
-const workflowFactoryStep = new Step({
-  id: 'workflowFactory',
-  execute: async ({ context, mastra }) => {
-    if (!mastra) {
-      throw new Error('Mastra instance not available');
-    }
-    
-    // 入力に基づいて動的なワークフローを作成
-    const dynamicWorkflow = new Workflow({
-      name: `dynamic-${context.workflowType}-workflow`,
-      mastra,
-      triggerSchema: z.object({
-        input: z.string(),
-      }),
-    });
-    
-    // ワークフロータイプに応じて異なるステップを追加
-    if (context.workflowType === 'simple') {
-      // シンプルなワークフロー
-      const simpleStep = new Step({
-        id: 'simpleStep',
-        execute: async ({ context }) => {
-          return { result: `Simple processing: ${context.triggerData.input}` };
-        },
-      });
-      dynamicWorkflow.step(simpleStep).commit();
-    } else {
-      // 複雑なワークフロー
-      const step1 = new Step({
-        id: 'step1',
-        execute: async ({ context }) => {
-          return { intermediateResult: `First processing: ${context.triggerData.input}` };
-        },
-      });
-      const step2 = new Step({
-        id: 'step2',
-        execute: async ({ context }) => {
-          const intermediate = context.getStepResult(step1).intermediateResult;
-          return { finalResult: `Second processing: ${intermediate}` };
-        },
-      });
-      dynamicWorkflow.step(step1).then(step2).commit();
-    }
-    
-    // 動的ワークフローを実行
-    const run = dynamicWorkflow.createRun();
-    const result = await run.start({
-      triggerData: { input: context.inputData },
-    });
-    
-    return { result };
-  },
-});
-```
-
-これは魔法使いの中でも最上級の技！「その場の状況を見て、完全に新しい魔法の詠唱法を即興で作り出す」という神業です。入力パラメータを見て「これは簡単な呪文で解決できるな」または「複雑な多段階魔法が必要だな」と判断し、その場で適切な魔法の設計図を生み出し実行します。究極の応用力と言えるでしょう！🧙‍♂️✨
-
-## 実践例：マルチエージェントワークフロー - 魔法使いたちの協演 🎭
-
-最後に、複数の魔法使い（エージェント）を組み合わせた壮大な魔法の実践例を見てみましょう。この例では、文章を書くのが得意な「コピーライター魔法使い」と、文章を磨くのが得意な「エディター魔法使い」を順番に呼び出し、素晴らしいコンテンツを創造します。
-
-```typescript
-import { Agent, Step, Workflow, Mastra } from "@mastra/core";
-import { openai } from "@ai-sdk/openai";
-import { z } from "zod";
-
-// コピーライターエージェント
-const copywriterAgent = new Agent({
-  name: "copywriterAgent",
-  instructions: "あなたはブログ記事を作成するコピーライターです。魅力的で情報価値の高い記事を書いてください。",
-  model: openai("gpt-4o"),
-});
-
-// エディターエージェント
-const editorAgent = new Agent({
-  name: "editorAgent",
-  instructions: "あなたはブログ記事を編集するエディターです。文法ミスを修正し、構造を改善し、より読みやすくしてください。",
-  model: openai("gpt-4o"),
-});
-
-// ワークフロー定義
-const contentWorkflow = new Workflow({
-  name: "content-workflow",
-  triggerSchema: z.object({
-    topic: z.string(),
-  }),
-});
-
-// コピーライターステップ
-const copywriterStep = new Step({
-  id: "copywriterStep",
-  execute: async ({ context, mastra }) => {
-    const topic = context.machineContext?.triggerData?.topic;
-    const agent = mastra?.agents?.copywriterAgent;
-    
-    if (!agent) {
-      throw new Error("Copywriter agent not found");
-    }
-    
-    const result = await agent.generate(`${topic}についての800文字程度のブログ記事を作成してください`);
-    
-    return { draft: result.text };
-  },
-});
-
-// エディターステップ
-const editorStep = new Step({
-  id: "editorStep",
-  execute: async ({ context, mastra }) => {
-    const draft = context.machineContext?.getStepPayload("copywriterStep")?.draft;
-    const agent = mastra?.agents?.editorAgent;
-    
-    if (!agent || !draft) {
-      throw new Error("Editor agent not found or draft is missing");
-    }
-    
-    const result = await agent.generate(`以下のブログ記事を編集してください。文法ミスを修正し、より読みやすく魅力的にしてください：\n\n${draft}`);
-    
-    return { finalContent: result.text };
-  },
-});
-
-// ワークフローにステップを追加
-contentWorkflow
-  .step(copywriterStep)
-  .then(editorStep)
-  .commit();
-
-// Mastraインスタンスの作成
-const mastra = new Mastra({
-  agents: { copywriterAgent, editorAgent },
-  workflows: { contentWorkflow },
-});
-
-// ワークフローの実行
-async function runContentWorkflow(topic) {
-  const { runId, start } = await mastra
-    .getWorkflow("content-workflow")
-    .createRun();
-    
-  const result = await start({ 
-    triggerData: { topic } 
-  });
+// コンテキストからデータを取得する例
+execute: async ({ context }) => {
+  // 1. ワークフロー起動時の入力データにアクセス
+  const name = context.machineContext?.triggerData?.name;
   
-  console.log("最終コンテンツ:", result.results.editorStep.finalContent);
-  return result;
+  // 2. 前のステップの結果にアクセス
+  const previousResult = context.getStepResult(previousStep);
+  
+  // 3. 特定のステップの特定フィールドにアクセス
+  const age = context.getStepOutput(userInfoStep, 'age');
+  
+  return { message: `${name}さん、${age}歳の方ですね！` };
 }
-
-// 使用例
-// runContentWorkflow("人工知能の最新トレンド");
 ```
 
-この例は、まるで出版社での共同作業のよう！まずコピーライター魔法使いがトピックに基づいて記事の下書きを作成し、次にエディター魔法使いがその下書きを磨き上げて輝かせます。それぞれの魔法使いが得意分野で力を発揮し、一人では作れないような素晴らしい作品が出来上がります。チームワークの魔法ですね！👨‍👩‍👧‍👦✨
+コンテキストは「ワークフローの記憶」のようなもの。すべてのステップが共有するノートのようなイメージです。この仕組みを活用すれば、スムーズなデータの流れを実現できますよ！
 
-## まとめ - 魔法の旅を振り返って 🌈
+## 実用的なワークフロー例 - 実践演習 💼
 
-おめでとうございます！この章では、Mastraにおけるワークフローという魔法の設計図の概念と実装方法について冒険してきました：
+学んだ知識を活かして、実用的なワークフローの例を見てみましょう。以下は「ユーザーからの問い合わせを処理する」ワークフローの例です：
 
-- ワークフローの基本構造とその目的 📜
-- ステップの定義と実装方法 🔍
-- 制御フローの実現（順次実行、条件分岐、ループ）🔀
-- ステップ間のデータの流れと変数の使用 💫
-- ワークフローの一時停止と再開 ⏸️▶️
-- 動的ワークフローの実装 🌱
-- 複数エージェントを組み合わせた実践例 👥
+```typescript
+import { Workflow, Step } from "@mastra/core";
+import { z } from "zod";
+import { openai } from "@ai-sdk/openai";
 
-あなたはこれで、単なる魔法の杖の使い方だけでなく、魔法の設計図を描く能力まで手に入れました！これにより、複雑な問題を構造化して解決し、エージェントたちの力を最大限に引き出すことができるようになります。
+// 問い合わせ内容を分類するステップ
+const classifyInquiryStep = new Step({
+  id: "classifyInquiry",
+  execute: async ({ context }) => {
+    const inquiry = context.machineContext?.triggerData?.message;
+    const agent = new Agent({
+      model: openai("gpt-4o"),
+      instructions: "問い合わせを「技術的質問」「料金関連」「アカウント問題」「その他」のいずれかに分類してください"
+    });
+    
+    const result = await agent.generate(inquiry);
+    let category = "その他";
+    
+    if (result.text.includes("技術的")) category = "技術的質問";
+    else if (result.text.includes("料金")) category = "料金関連";
+    else if (result.text.includes("アカウント")) category = "アカウント問題";
+    
+    return { category };
+  }
+});
 
-次の章では、魔法使いの知識を拡張する「RAG（Retrieval Augmented Generation）」という特別な技術について学んでいきましょう。RAGを使えば、エージェントはさらに膨大な知識ベースを活用して、より賢く、より役立つ助言ができるようになります！
+// 各カテゴリに対応するステップを用意
+const techSupportStep = new Step({
+  id: "techSupport",
+  execute: async ({ context }) => {
+    const inquiry = context.machineContext?.triggerData?.message;
+    // 技術的な回答を生成...
+    return { response: "技術的なご質問ありがとうございます。..." };
+  }
+});
 
-さあ、次なる冒険へ出発しましょう！🚀
+const billingStep = new Step({
+  id: "billing",
+  execute: async ({ context }) => {
+    // 料金に関する回答を生成...
+    return { response: "料金に関するご質問ありがとうございます。..." };
+  }
+});
+
+const accountStep = new Step({
+  id: "account",
+  execute: async ({ context }) => {
+    // アカウントに関する回答を生成...
+    return { response: "アカウントに関するご質問ありがとうございます。..." };
+  }
+});
+
+const otherInquiryStep = new Step({
+  id: "otherInquiry",
+  execute: async ({ context }) => {
+    // その他の質問への回答を生成...
+    return { response: "お問い合わせありがとうございます。..." };
+  }
+});
+
+// 最終的な返信を整形するステップ
+const formatResponseStep = new Step({
+  id: "formatResponse",
+  execute: async ({ context }) => {
+    // 前のステップの応答を取得
+    const response = context.getStepOutput(techSupportStep, 'response') ||
+                     context.getStepOutput(billingStep, 'response') ||
+                     context.getStepOutput(accountStep, 'response') ||
+                     context.getStepOutput(otherInquiryStep, 'response');
+    
+    return {
+      formattedResponse: `
+        お問い合わせありがとうございます。
+        
+        ${response}
+        
+        他にご質問があればお気軽にお問い合わせください。
+        
+        サポートチーム
+      `
+    };
+  }
+});
+
+// ワークフローを組み立てる
+const customerSupportWorkflow = new Workflow({
+  name: "customer-support",
+  triggerSchema: z.object({
+    message: z.string(),
+    email: z.string().email()
+  })
+});
+
+customerSupportWorkflow
+  .step(classifyInquiryStep)
+  .branch(({ context }) => {
+    return context.getStepResult(classifyInquiryStep)?.category;
+  })
+  .when("技術的質問", workflow => workflow.step(techSupportStep))
+  .when("料金関連", workflow => workflow.step(billingStep))
+  .when("アカウント問題", workflow => workflow.step(accountStep))
+  .when("その他", workflow => workflow.step(otherInquiryStep))
+  .then(formatResponseStep)
+  .commit();
+```
+
+このワークフローは、以下のような流れで動作します：
+
+1. ユーザーからの問い合わせメッセージを受け取る
+2. AIを使って問い合わせの内容を分類する
+3. 分類に基づいて適切な専門担当者（ステップ）に転送
+4. 回答を生成
+5. 共通のフォーマットで返信を整形
+
+これは、実際のカスタマーサポートシステムの縮小版のように機能します。人間のオペレーターが行うような「問い合わせの内容を理解して、適切な部門に振り分ける」という判断をAIが行い、それぞれの専門部署が回答するという流れを自動化しているのです。
+
+## エラーハンドリング - 問題への対処法 🛡️
+
+ワークフローの実行中に問題が発生しても、適切に対応できるようにエラーハンドリングの仕組みを組み込むことができます：
+
+```typescript
+import { Workflow, Step } from "@mastra/core";
+
+// エラーが発生するかもしれないステップ
+const riskyStep = new Step({
+  id: "riskyStep",
+  execute: async () => {
+    const random = Math.random();
+    if (random < 0.5) {
+      throw new Error("何かがうまくいきませんでした");
+    }
+    return { success: true };
+  }
+});
+
+// エラーハンドリングステップ
+const errorHandlerStep = new Step({
+  id: "errorHandler",
+  execute: async ({ context }) => {
+    const error = context.machineContext?.error;
+    console.log("エラーを処理しています:", error);
+    // ここでエラーログを記録したり、代替処理を実行したりできます
+    return { 
+      errorHandled: true,
+      message: "エラーを処理しました"
+    };
+  }
+});
+
+// ワークフローの定義
+const workflowWithErrorHandling = new Workflow({ name: "error-handling" });
+
+workflowWithErrorHandling
+  .step(riskyStep)
+  .catch(errorHandlerStep)
+  .commit();
+```
+
+この`catch`メソッドにより、問題が発生したときに特定のステップ（この場合は`errorHandlerStep`）が実行されます。これによって、エラーの記録、ユーザーへの通知、代替処理の実行など、様々な対応が可能になります。まるで道路の迂回路のように、メインルートで問題が発生したときの代替ルートを用意しておくのです！
+
+## まとめ - ワークフローの力 🌟
+
+Mastraのワークフローは、AIエージェントにとって強力な機能です。複雑なタスクを小さなステップに分割し、条件分岐や並列処理のような高度な制御フローを導入することで、エージェントはより賢く、効率的に、そして柔軟に動作するようになります。
+
+まるで複雑な料理レシピや詳細な旅行計画のように、適切にステップを組み合わせることで、思いもよらない素晴らしい結果を生み出すことができるのです。
+
+ワークフローを使いこなせるようになると、あなたは単なるエージェント開発者から、複雑なAIシステムのアーキテクトへと成長するでしょう！🏗️
+
+次の章では、エージェントの知識を増強する「RAG（検索拡張生成）」について学んでいきます。さらに強力なエージェントを作るための次のステップに進みましょう！

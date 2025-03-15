@@ -2,338 +2,404 @@
 title: "ローカル開発環境"
 ---
 
-# ローカル開発環境
+# ローカル開発環境でAIエージェントを構築しよう 🛠️
 
-Mastraエージェントを効果的に開発するには、適切なローカル開発環境を構築することが重要です。この章では、Mastraプロジェクトの作成方法、開発サーバーの起動と利用方法、外部サービスとの統合など、ローカル開発に関する詳細を解説します。
+## ローカル開発の重要性 🏠
 
-## プロジェクトの作成
+AIエージェント開発において、ローカル開発環境は非常に重要です。本番環境にデプロイする前に、自分のコンピュータ上でエージェントの動作を確認し、迅速に改良を重ねることができます。Mastraは、このローカル開発プロセスを簡単かつ効率的にするための優れたツールを提供しています。
 
-Mastraプロジェクトを始めるには、主に2つの方法があります：
+ローカル開発環境を使うことで得られる主なメリットは：
 
-1. 新しいプロジェクトを作成する（`mastra create`）
-2. 既存のプロジェクトにMastraを追加する（`mastra init`）
+- **迅速な開発サイクル** ⚡: 変更をすぐに確認でき、開発スピードが格段に向上します
+- **コスト削減** 💰: API呼び出しの回数を減らせるため、開発コストを抑えられます
+- **プライバシー保護** 🔒: センシティブなデータを外部に送信せずに開発できます
+- **ネットワーク非依存** 🌐: インターネット接続がなくても開発を続けられます
+- **実験の自由度** 🧪: 大胆な実験も気軽に試せます
 
-### 新しいプロジェクトの作成
+それでは、Mastraのローカル開発環境を構築し、実際にエージェントを動かしてみましょう！
 
-新しいプロジェクトを作成するには、パッケージマネージャーまたはMastra CLIを使用できます：
+## Mastra CLIのインストール 🔧
 
-```bash
-# npmを使用する場合
-npm create mastra@latest
-
-# pnpmを使用する場合
-pnpm create mastra
-
-# yarnを使用する場合
-yarn create mastra
-
-# bunを使用する場合
-bunx create-mastra
-```
-
-あるいは、Mastra CLIをグローバルにインストールして使用することもできます：
+Mastraのローカル開発環境を構築するには、まずMastra CLIをインストールする必要があります。これは、エージェントの開発、テスト、デプロイを支援する強力なコマンドラインツールです。
 
 ```bash
-# npmの場合
-npm install -g mastra@latest
-mastra create
+# npmを使ってグローバルにインストール
+npm install -g @mastra/cli
 
-# pnpmの場合
-pnpm add -g mastra@latest
-mastra create
+# インストールの確認
+mastra --version
 ```
 
-生成されるプロジェクト構造は以下のようになります：
+インストールが完了したら、`mastra`コマンドが使えるようになります。このツールを使って、プロジェクトの初期化からデプロイまで、様々な操作を行うことができます。
 
-```
-my-project/
-├── src/
-│   └── mastra/
-│       └── index.ts  # Mastraのエントリーポイント
-├── package.json
-└── tsconfig.json
-```
+## プロジェクトの作成 🏗️
 
-### 既存のプロジェクトへの追加
-
-既存のプロジェクトにMastraを追加するには、以下のコマンドを実行します：
+新しいMastraプロジェクトを作成するには、`mastra init`コマンドを使います。このコマンドは、必要なファイルとフォルダ構造を自動的に生成します。
 
 ```bash
+# 新しいディレクトリを作成してプロジェクトを初期化
+mkdir my-agent-project
+cd my-agent-project
 mastra init
+
+# または直接プロジェクト名を指定して初期化
+mastra init my-agent-project
 ```
 
-このコマンドは以下の変更を行います：
+プロジェクト初期化時には、いくつかの質問に答える必要があります：
 
-1. `src/mastra`ディレクトリとエントリーポイントを作成
-2. 必要な依存関係を追加
-3. TypeScriptコンパイラオプションを設定
+- プロジェクト名
+- 使用するAIプロバイダー（OpenAI、Anthropic、Cohereなど）
+- プロジェクトの説明
+- 使用するテンプレート（基本エージェント、RAGエージェント、ワークフローなど）
 
-### コマンド引数とインタラクティブセットアップ
+質問に答えると、Mastraは自動的にプロジェクトの基本構造を生成します。
 
-プロジェクト作成時には、以下のような引数を指定できます：
+## プロジェクト構造の理解 📂
 
-```bash
---components    コンポーネントを指定（agents, memory, storage）
---llm-provider  LLMプロバイダーを指定（openai, anthropic）
---add-example   サンプル実装を含める
---llm-api-key   プロバイダーのAPIキー
+生成されたプロジェクトの基本構造は以下のようになっています：
+
+```
+my-agent-project/
+├── .env                  # 環境変数（APIキーなど）
+├── .gitignore            # Gitの除外ファイル設定
+├── package.json          # プロジェクト設定とパッケージ依存関係
+├── tsconfig.json         # TypeScript設定
+├── src/                  # ソースコードディレクトリ
+│   ├── index.ts          # メインエントリーポイント
+│   ├── agent.ts          # エージェント定義
+│   └── tools/            # カスタムツール
+├── tests/                # テストファイル
+└── README.md             # プロジェクト説明
 ```
 
-引数なしでコマンドを実行すると、インタラクティブなCLIプロンプトが開始され、以下の項目を設定できます：
+この構造は、選択したテンプレートによって若干異なる場合があります。例えば、RAGエージェントを選択した場合は、ベクトルストアの設定ファイルなども含まれます。
 
-1. コンポーネントの選択
-2. LLMプロバイダーの設定
-3. APIキーの設定
-4. サンプルコードの追加
+## 環境変数の設定 🔐
 
-### プロジェクトの初期化
+エージェントを動かすには、必要なAPIキーを設定する必要があります。プロジェクトルートにある`.env`ファイルを編集して、必要なAPIキーを追加しましょう。
 
-プロジェクトを作成したら、以下のコマンドで依存関係をインストールし、開発サーバーを起動します：
-
-```bash
-# 依存関係のインストール
-npm install
-
-# 開発サーバーの起動（ポート3000）
-mastra dev
-
-# プレイグラウンドにアクセス: http://localhost:4111
+```
+# .envファイルの例
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-...
+PINECONE_API_KEY=...
+PINECONE_ENVIRONMENT=...
 ```
 
-## 開発サーバー（mastra dev）
+これらのAPIキーは、各サービスのウェブサイトから取得できます。APIキーは秘密情報なので、Gitなどのバージョン管理システムにコミットしないように注意しましょう（`.gitignore`ファイルに`.env`が含まれていることを確認してください）。
 
-`mastra dev`コマンドは、Mastraアプリケーションをローカルで提供する開発サーバーを起動します。このサーバーはエージェントとワークフローの検査と開発に必要な様々な機能を提供します。
+## エージェントの定義 🤖
 
-### REST APIエンドポイント
-
-`mastra dev`は、エージェントとワークフローのRESTful APIエンドポイントを提供します：
-
-* `POST /api/agents/:agentId/generate` - エージェントに対してテキスト生成をリクエスト
-* `POST /api/agents/:agentId/stream` - エージェントからのストリーミングレスポンスをリクエスト
-* `POST /api/workflows/:workflowId/start` - ワークフローを開始
-* `POST /api/workflows/:workflowId/:instanceId/event` - ワークフローインスタンスにイベントを送信
-* `GET /api/workflows/:workflowId/:instanceId/status` - ワークフローインスタンスのステータスを取得
-
-デフォルトでは、サーバーは`http://localhost:4111`で実行されますが、`--port`フラグを使用してポートを変更できます。
-
-### クライアントSDKの使用
-
-ローカルMastraサーバーと対話する最も簡単な方法は、TypeScript/JavaScriptクライアントSDKを使用することです：
-
-```bash
-npm install @mastra/client-js
-```
-
-その後、以下のようにローカルサーバーを指定して設定します：
+次に、`src/agent.ts`ファイルを編集して、エージェントの動作を定義します。基本的なエージェント定義は以下のようになります：
 
 ```typescript
-import { MastraClient } from "@mastra/client-js";
+import { Agent } from "@mastra/core/agent";
+import { openai } from "@ai-sdk/openai";
 
-const client = new MastraClient({
-  baseUrl: "http://localhost:4111",
-});
-
-// 例：ローカルエージェントとの対話
-const agent = client.getAgent("my-agent");
-const response = await agent.generate({
-  messages: [{ role: "user", content: "こんにちは！" }],
+export const myAgent = new Agent({
+  name: "ヘルパーエージェント",
+  instructions: `あなたは親切で役立つアシスタントです。
+ユーザーの質問に簡潔かつ正確に回答してください。
+わからないことがあれば、正直に「わかりません」と答えてください。`,
+  model: openai("gpt-4o"),
 });
 ```
 
-クライアントSDKは、すべてのAPIエンドポイントに対して型安全なラッパーを提供し、ローカルのMastraアプリケーションの開発とテストを容易にします。
+この例では、OpenAIのGPT-4oモデルを使用したシンプルなエージェントを定義しています。`instructions`フィールドには、エージェントの役割や動作方針を詳細に記述します。これはエージェントのパーソナリティと能力を決定する重要な部分です。
 
-### UIプレイグラウンド
+## カスタムツールの追加 🧰
 
-`mastra dev`は、以下の機能を持つUIを提供します：
-
-* エージェントチャットインターフェース - エージェントとの対話テスト
-* ワークフロー可視化ツール - ワークフローの状態と流れを視覚的に確認
-* ツールプレイグラウンド - ツールの動作テスト
-
-開発サーバーを起動すると、自動的にブラウザが開き、このUIにアクセスできます。
-
-### OpenAPI仕様
-
-開発サーバーはOpenAPI仕様も提供しており、以下のURLでアクセスできます：
-
-* `GET /openapi.json`
-
-この仕様を使用して、サードパーティのツールや独自のクライアントを構築することもできます。
-
-## 外部サービスとの統合
-
-Mastraは、様々な外部サービスとの統合機能を提供しています。これらの統合は、エージェントのツールやワークフローのステップとして使用できる、自動生成された型安全なAPIクライアントです。
-
-### 統合のインストール
-
-Mastraのデフォルト統合は、個別にインストール可能なnpmモジュールとしてパッケージ化されています。統合をプロジェクトに追加するには、npmを介してインストールし、Mastra設定にインポートします。
-
-#### 例：GitHub統合の追加
-
-1. **統合パッケージのインストール**
-
-```bash
-npm install @mastra/github
-```
-
-2. **プロジェクトへの統合の追加**
-
-統合用の新しいファイル（例：`src/mastra/integrations/index.ts`）を作成し、統合をインポートします：
+エージェントの能力を拡張するには、カスタムツールを追加します。ツールを使うことで、エージェントは外部APIの呼び出し、データベースの検索、計算の実行など、様々なタスクを実行できるようになります。
 
 ```typescript
-// src/mastra/integrations/index.ts
-import { GithubIntegration } from '@mastra/github';
+import { Agent } from "@mastra/core/agent";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
 
-export const github = new GithubIntegration({
-  config: {
-    PERSONAL_ACCESS_TOKEN: process.env.GITHUB_PAT!,
-  },
-});
-```
-
-`process.env.GITHUB_PAT!`を実際のGitHubパーソナルアクセストークンに置き換えるか、環境変数が適切に設定されていることを確認してください。
-
-3. **ツールやワークフローでの統合の使用**
-
-統合を使用してエージェントのツールを定義するか、ワークフローで使用できます：
-
-```typescript
-// src/mastra/tools/index.ts
-import { createTool } from '@mastra/core';
-import { z } from 'zod';
-import { github } from '../integrations';
-
-export const getMainBranchRef = createTool({
-  id: 'getMainBranchRef',
-  description: 'GitHubリポジトリからメインブランチの参照を取得',
-  inputSchema: z.object({
-    owner: z.string(),
-    repo: z.string(),
+// 天気情報を取得するカスタムツール
+const getWeatherTool = {
+  id: "getWeather",
+  description: "特定の都市の現在の天気情報を取得します",
+  schema: z.object({
+    city: z.string().describe("天気を調べたい都市名"),
+    country: z.string().optional().describe("国名（省略可）"),
   }),
-  outputSchema: z.object({
-    ref: z.string().optional(),
-  }),
-  execute: async ({ context }) => {
-    const client = await github.getApiClient();
-    const mainRef = await client.gitGetRef({
-      path: {
-        owner: context.owner,
-        repo: context.repo,
-        ref: 'heads/main',
-      },
-    });
-    return { ref: mainRef.data?.ref };
+  execute: async ({ city, country }) => {
+    // 実際には外部APIを呼び出すコードを書きます
+    console.log(`${city}, ${country || "Japan"}の天気を取得中...`);
+    
+    // デモ用のダミーレスポンス
+    return {
+      temperature: 22,
+      condition: "晴れ",
+      humidity: 65,
+      windSpeed: 10,
+    };
   },
-});
-```
+};
 
-### エージェントでの統合の使用
-
-作成したツールをエージェントに含めることで、エージェントが外部サービスと対話できるようになります：
-
-```typescript
-// src/mastra/agents/index.ts
-import { openai } from '@ai-sdk/openai';
-import { Agent } from '@mastra/core';
-import { getMainBranchRef } from '../tools';
-
-export const codeReviewAgent = new Agent({
-  name: 'コードレビューエージェント',
-  instructions: 'コードリポジトリをレビューしてフィードバックを提供するエージェント',
-  model: openai('gpt-4o-mini'),
+// ツールを使用するエージェントの定義
+export const weatherAgent = new Agent({
+  name: "天気アシスタント",
+  instructions: `あなたは天気情報を提供するアシスタントです。
+ユーザーが天気について質問したら、getWeatherツールを使って情報を取得し、
+わかりやすく回答してください。`,
+  model: openai("gpt-4o"),
   tools: {
-    getMainBranchRef,
-    // 他のツール...
+    getWeatherTool,
   },
 });
 ```
 
-### 環境設定
+この例では、特定の都市の天気情報を取得するカスタムツールを定義しています。実際のアプリケーションでは、このツールは外部の天気APIを呼び出すコードを含むことになります。
 
-統合に必要なAPIキーやトークンが環境変数に適切に設定されていることを確認してください。例えば、GitHub統合の場合、GitHubパーソナルアクセストークンを設定する必要があります：
+## ローカルサーバーの起動 🚀
+
+エージェントの定義が完了したら、ローカル開発サーバーを起動して動作を確認しましょう。Mastra CLIの`dev`コマンドを使うと、ホットリロード機能付きの開発サーバーが起動します。
+
+```bash
+# 開発サーバーを起動
+mastra dev
+```
+
+このコマンドを実行すると、以下のような出力が表示されます：
 
 ```
-GITHUB_PAT=your_personal_access_token
+🚀 Mastra開発サーバーを起動中...
+📡 サーバーが http://localhost:3000 で起動しました
+🔌 WebSocketサーバーが ws://localhost:3001 で起動しました
+👀 ファイルの変更を監視中...
 ```
 
-機密情報を管理するには、`.env`ファイルなどの安全な方法を検討してください。
+これで、ブラウザから`http://localhost:3000`にアクセスすると、エージェントとチャットできるインターフェースが表示されます。
 
-### 利用可能な統合
+## デバッグとテスト 🐛
 
-Mastraは、主にOAuthを必要としないAPIキーベースの統合を含む、いくつかのビルトイン統合を提供しています。利用可能な統合には、GitHub、Stripe、Resend、Firecrawlなどがあります。利用可能な統合の完全なリストについては、[Mastraのコードベース](https://github.com/mastra-ai/mastra/tree/main/integrations)または[npmパッケージ](https://www.npmjs.com/search?q=%22%40mastra%22)を確認してください。
+開発中は、エージェントの動作を詳細に確認するためのデバッグ機能が重要です。Mastraは、ログ出力やステップ実行などの便利なデバッグ機能を提供しています。
 
-## デバッグとテスト
+### ログの確認
 
-ローカル開発環境では、エージェントやワークフローのデバッグとテストが容易に行えます。以下に、デバッグとテストのためのいくつかのヒントを紹介します。
+開発サーバーのコンソール出力には、エージェントの動作に関する詳細なログが表示されます。これには、モデルへのリクエスト、ツールの実行結果、エラーメッセージなどが含まれます。
 
-### コンソールログの活用
+### デバッグモードの有効化
 
-ツールの実行時にコンソールログを追加して、実行の流れを追跡できます：
+より詳細なデバッグ情報を表示するには、環境変数`DEBUG=mastra:*`を設定します：
+
+```bash
+# デバッグモードを有効にして開発サーバーを起動
+DEBUG=mastra:* mastra dev
+```
+
+これにより、内部処理の詳細なログが表示されるようになります。
+
+### 自動テストの作成
+
+エージェントの動作を自動的にテストするには、`tests`ディレクトリにテストファイルを作成します。Mastraは、Jest、Vitest、Mochaなどの一般的なJavaScriptテストフレームワークと互換性があります。
 
 ```typescript
-export const myTool = createTool({
-  // ... 他の設定 ...
-  execute: async ({ context }) => {
-    console.log('ツールが呼び出されました', context);
-    // ツールのロジック
-    const result = await doSomething(context.input);
-    console.log('結果:', result);
-    return { output: result };
-  },
+// tests/agent.test.ts
+import { describe, it, expect } from 'vitest';
+import { myAgent } from '../src/agent';
+
+describe('MyAgent', () => {
+  it('should respond to a greeting', async () => {
+    const response = await myAgent.generate('こんにちは！');
+    expect(response.text).toContain('こんにちは');
+  });
+
+  it('should use the weather tool when asked about weather', async () => {
+    const response = await myAgent.generate('東京の天気を教えてください');
+    expect(response.toolCalls).toHaveLength(1);
+    expect(response.toolCalls[0].id).toBe('getWeather');
+  });
 });
 ```
 
-### エラーハンドリング
+テストを実行するには、以下のコマンドを使います：
 
-ツールやワークフローステップでエラー処理を追加して、問題を特定しやすくします：
+```bash
+# テストを実行
+npm test
+```
+
+## 高度な機能：ローカルモデルの使用 🧠
+
+Mastraは、OpenAIやAnthropicなどのクラウドベースのAIモデルだけでなく、ローカルで実行できるAIモデルもサポートしています。これにより、インターネット接続なしで開発したり、センシティブなデータを外部に送信せずに処理したりすることができます。
+
+### Ollama統合
+
+[Ollama](https://ollama.ai/)は、様々なオープンソースLLMをローカルで実行するためのツールです。Mastraと組み合わせることで、完全にローカルな開発環境を構築できます。
+
+まず、Ollamaをインストールして起動します：
+
+```bash
+# Ollamaのインストール（macOSの例）
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Ollamaサーバーの起動
+ollama serve
+
+# モデルのダウンロード（例：Llama 2）
+ollama pull llama2
+```
+
+次に、Mastraプロジェクトで`@ai-sdk/ollama`パッケージをインストールします：
+
+```bash
+npm install @ai-sdk/ollama
+```
+
+そして、エージェント定義でOllamaモデルを使用するように設定します：
 
 ```typescript
-export const robustTool = createTool({
-  // ... 他の設定 ...
-  execute: async ({ context }) => {
+import { Agent } from "@mastra/core/agent";
+import { ollama } from "@ai-sdk/ollama";
+
+export const localAgent = new Agent({
+  name: "ローカルアシスタント",
+  instructions: `あなたは親切で役立つアシスタントです。
+ユーザーの質問に簡潔かつ正確に回答してください。`,
+  model: ollama("llama2"),
+});
+```
+
+これで、インターネット接続なしでもエージェントを開発・テストできるようになります。
+
+## ローカル開発のベストプラクティス 🌟
+
+Mastraを使ったローカル開発を効率的に行うためのベストプラクティスをいくつか紹介します：
+
+### 1. 段階的な開発アプローチ
+
+複雑なエージェントを一度に作るのではなく、基本機能から始めて徐々に機能を追加していくアプローチが効果的です：
+
+1. まずは基本的な会話能力を持つシンプルなエージェントを作る
+2. 一つずつツールを追加して、エージェントの能力を拡張する
+3. エージェントの指示（instructions）を徐々に洗練させる
+4. ユーザーフィードバックを取り入れて継続的に改善する
+
+### 2. モックデータの活用
+
+開発初期段階では、実際のAPIを呼び出す代わりにモックデータを使うことで、開発速度を上げることができます：
+
+```typescript
+// 天気APIのモック
+const getWeatherMock = {
+  // ...前述のツール定義...
+  execute: async ({ city }) => {
+    // 実際のAPI呼び出しの代わりにモックデータを返す
+    const mockData = {
+      "東京": { temperature: 22, condition: "晴れ" },
+      "大阪": { temperature: 24, condition: "曇り" },
+      "札幌": { temperature: 15, condition: "雨" },
+      // デフォルト値
+      "default": { temperature: 20, condition: "不明" }
+    };
+    
+    return mockData[city] || mockData["default"];
+  }
+};
+```
+
+### 3. 環境ごとの設定分離
+
+開発環境、テスト環境、本番環境で異なる設定を使い分けるために、環境変数を活用しましょう：
+
+```typescript
+// 環境に応じてモデルを切り替える
+const modelProvider = process.env.NODE_ENV === 'production'
+  ? openai("gpt-4o")
+  : process.env.NODE_ENV === 'test'
+    ? openai("gpt-3.5-turbo")
+    : ollama("llama2");  // 開発環境ではローカルモデル
+
+export const myAgent = new Agent({
+  // ...
+  model: modelProvider,
+});
+```
+
+### 4. エラーハンドリングの実装
+
+実際のアプリケーションでは、APIの障害やレート制限などの問題に対処するためのエラーハンドリングが重要です：
+
+```typescript
+const getWeatherWithErrorHandling = {
+  // ...前述のツール定義...
+  execute: async ({ city }) => {
     try {
-      // ツールのロジック
-      return { success: true, data: result };
+      const response = await fetch(`https://weather-api.example.com/current?city=${city}`);
+      
+      if (!response.ok) {
+        if (response.status === 429) {
+          return { error: "レート制限に達しました。しばらく待ってから再試行してください。" };
+        }
+        return { error: `APIエラー: ${response.status}` };
+      }
+      
+      return await response.json();
     } catch (error) {
-      console.error('ツールの実行中にエラーが発生しました:', error);
-      return { success: false, error: error.message };
+      console.error("天気情報の取得に失敗:", error);
+      return { error: "天気情報を取得できませんでした。ネットワーク接続を確認してください。" };
     }
-  },
-});
+  }
+};
 ```
 
-### UIプレイグラウンドでのテスト
+## ローカル開発から本番環境へ 🚢
 
-開発サーバーのUIプレイグラウンドを使用して、エージェントとの対話をテストし、ツールの呼び出しと結果を確認します。これにより、エージェントが予期したように動作しているかを視覚的に確認できます。
+ローカル環境での開発が完了したら、エージェントを本番環境にデプロイする準備が整います。Mastraは、様々なデプロイオプションをサポートしています：
 
-## エージェント開発のベストプラクティス
+### ビルドプロセス
 
-ローカル開発環境でMastraエージェントを効果的に開発するためのベストプラクティスを以下に示します：
+本番環境用にプロジェクトをビルドするには、以下のコマンドを使います：
 
-1. **モジュール化された構造を維持する**：
-   - エージェント、ツール、統合、ワークフローを別々のファイルとディレクトリに整理します
-   - 関連するコンポーネントをまとめてインポート/エクスポートします
+```bash
+# プロジェクトをビルド
+mastra build
+```
 
-2. **環境変数を使用する**：
-   - 機密情報（APIキーなど）はコードにハードコーディングせず、環境変数を使用します
-   - 開発と本番環境で異なる設定を使用できるように、環境変数を管理します
+このコマンドは、TypeScriptコードをJavaScriptにコンパイルし、必要なアセットを最適化します。ビルド結果は`dist`ディレクトリに出力されます。
 
-3. **型安全性を確保する**：
-   - Zodスキーマを使用して、ツールの入力と出力を厳密に型付けします
-   - TypeScriptの型チェックを最大限活用します
+### デプロイオプション
 
-4. **段階的な開発とテスト**：
-   - 複雑なエージェントを一度に構築するのではなく、ツールごとに段階的に開発してテストします
-   - 各コンポーネントを独立してテストしてから、統合します
+Mastraエージェントは、様々なプラットフォームにデプロイできます：
 
-5. **ドキュメントを作成する**：
-   - 各ツールとエージェントには明確な説明とドキュメントを提供します
-   - 他の開発者が理解しやすいようにコードにコメントを追加します
+1. **Vercel**: サーバーレスデプロイに最適
+   ```bash
+   vercel deploy
+   ```
 
-## まとめ
+2. **AWS Lambda**: サーバーレス関数として実行
+   ```bash
+   mastra deploy aws
+   ```
 
-この章では、Mastraのローカル開発環境について学びました。プロジェクトの作成から開発サーバーの使用、外部サービスとの統合まで、Mastraエージェントの開発に必要な環境を整える方法を詳細に解説しました。
+3. **Docker**: コンテナ化してどこでも実行
+   ```bash
+   # Dockerfileが自動生成されます
+   mastra generate dockerfile
+   # イメージをビルドして実行
+   docker build -t my-agent .
+   docker run -p 3000:3000 my-agent
+   ```
 
-適切なローカル開発環境を構築することで、エージェントの開発、テスト、デバッグを効率的に行うことができます。`mastra dev`コマンドが提供するツールとインターフェイスを活用して、本番環境にデプロイする前にエージェントの動作を確実に検証しましょう。
+4. **Node.js サーバー**: 従来のサーバーとして実行
+   ```bash
+   # 本番モードで起動
+   NODE_ENV=production node dist/index.js
+   ```
 
-次の章では、Mastraアプリケーションを本番環境にデプロイする方法について詳しく見ていきます。 
+## まとめ：ローカル開発の力 💪
+
+この章では、Mastraを使ったローカル開発環境の構築方法を学びました。ローカル開発環境を活用することで、以下のメリットが得られます：
+
+- 迅速な開発サイクルによる生産性の向上
+- APIコスト削減とプライバシー保護
+- 柔軟な実験と迅速なイテレーション
+- ローカルモデルを活用したオフライン開発
+
+Mastra CLIの強力な機能を使いこなすことで、アイデアを素早くプロトタイプ化し、高品質なAIエージェントを効率的に開発できるようになります。次の章では、これらのエージェントを本番環境にデプロイする方法について詳しく見ていきましょう。
+
+ローカル開発環境は、あなたのアイデアを形にするための実験室です。思う存分試行錯誤して、革新的なAIエージェントを作り上げてください！🚀 

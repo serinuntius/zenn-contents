@@ -2,34 +2,34 @@
 title: "RAG（検索拡張生成）"
 --- 
 
-# RAGの魔法を解き放つ 🔮✨
+# RAGの力を解き放つ 🔍✨
 
-## RAGとは？魔法使いの記憶術 📚
+## RAGとは？LLMの知識強化システム 📚
 
-RAG（Retrieval-Augmented Generation：検索拡張生成）とは、魔法使い（LLM）の知識を、あなた独自の秘密の書物（データソース）から取り出した情報で強化する特別な魔術です！これは、魔法使いが自分自身の記憶だけでなく、あなたが用意した魔導書も参照して、より正確な呪文を唱えられるようにする技術なんです。✨
+RAG（Retrieval-Augmented Generation：検索拡張生成）とは、LLMの知識を、あなた独自のデータソースから取り出した情報で強化する特別な技術です！これは、AIモデルが自分自身の事前学習知識だけでなく、あなたが用意した特定の情報も参照して、より正確な回答を生成できるようにする仕組みなんです。✨
 
-Mastraの魔法図書館（RAGシステム）は、以下の素晴らしい機能を提供します：
+Mastraの RAGシステムは、以下の素晴らしい機能を提供します：
 
-- 📜 魔法の書物（ドキュメント）を処理し、記憶の結晶（埋め込み）に変える標準化された魔法の杖（API）
-- 🗄️ 様々な魔法の記憶庫（ベクトルストア）と連携できる
-- ✂️ 書物を最適な断片（チャンク）に分割し、記憶しやすくする戦略
-- 📊 魔法の効果（埋め込みと検索のパフォーマンス）を見える化する水晶球
+- 📜 ドキュメントを処理し、ベクトル埋め込みに変換する標準化されたAPI
+- 🗄️ 様々なベクトルストアと連携できる柔軟性
+- ✂️ ドキュメントを最適なチャンクに分割する効率的な戦略
+- 📊 埋め込みと検索のパフォーマンスを可視化する評価ツール
 
-「でも難しそう...」と思いましたか？心配いりません！RAGの魔法を習得すれば、あなたのエージェントはより賢く、正確になり、最新の情報を使った回答ができるようになります。まるで、魔法使いに最新の百科事典や専門書を与えるようなものです。結果として、「ふーん、そう思うだけかい？」という曖昧な回答から、「実はこれには確かな根拠があります！」という信頼性の高い回答へと進化するのです！🌟
+「でも難しそう...」と思いましたか？心配いりません！RAGの技術を習得すれば、あなたのエージェントはより賢く、正確になり、最新の情報を使った回答ができるようになります。これはまるで、AIに最新の百科事典や専門書を与えるようなものです。結果として、「ふーん、そう思うだけかい？」という曖昧な回答から、「実はこれには確かな根拠があります！」という信頼性の高い回答へと進化するのです！🌟
 
-## RAGの魔法の詠唱手順 🪄
+## RAGの処理手順 🔄
 
-RAGの魔法は、次のような美しい流れで詠唱されます：
+RAGのプロセスは、次のような効率的な流れで実行されます：
 
-1. **書物の収集** 📚: テキスト、HTML、マークダウンなどの形式から魔法の知識を集める
-2. **知識の分割** ✂️: 大きな書物を理解しやすい小さな断片（チャンク）に分ける
-3. **記憶の結晶化** 💎: 断片を魔法のエネルギー（ベクトル）に変換する
-4. **記憶の保管** 🗃️: エネルギーを魔法の保管庫（ベクトルデータベース）に収める
-5. **知識の検索** 🔍: 質問に関連する最も価値ある記憶の断片を呼び出す
-6. **記憶の整理** 📋: 必要に応じて記憶を重要度順に並べ直す
-7. **魔法の回答** ✨: 集めた記憶を使って魔法使い（LLM）が最適な回答を紡ぎ出す
+1. **文書の収集** 📚: テキスト、HTML、マークダウンなどの形式から知識を集める
+2. **情報の分割** ✂️: 大きな文書を理解しやすい小さな断片（チャンク）に分ける
+3. **ベクトル変換** 💎: 断片をベクトル（数値配列）に変換する
+4. **データの保存** 🗃️: ベクトルをベクトルデータベースに収める
+5. **関連情報の検索** 🔍: 質問に関連する最も価値ある断片を呼び出す
+6. **情報の整理** 📋: 必要に応じて情報を重要度順に並べ直す
+7. **回答の生成** ✨: 集めた情報を使ってLLMが最適な回答を作成する
 
-それでは、基本的なRAG魔法の呪文を見てみましょう：
+それでは、基本的なRAG実装のコードを見てみましょう：
 
 ```typescript
 import { embedMany } from "ai";
@@ -37,23 +37,23 @@ import { openai } from "@ai-sdk/openai";
 import { PgVector } from "@mastra/pg";
 import { MDocument } from "@mastra/rag";
 
-// 1. 魔法の書物を用意
-const doc = MDocument.fromText(`ここに秘密の知識を記入...`);
+// 1. 文書を用意
+const doc = MDocument.fromText(`ここに重要な情報を記入...`);
 
-// 2. 書物を読みやすい断片に分割
+// 2. 文書を読みやすい断片に分割
 const chunks = await doc.chunk({
   strategy: "recursive",
   size: 512,
   overlap: 50,
 });
 
-// 3. 断片を魔法のエネルギーに変換
+// 3. 断片をベクトルに変換
 const { embeddings } = await embedMany({
   values: chunks,
   model: openai.embedding("text-embedding-3-small"),
 });
 
-// 4. エネルギーを魔法の保管庫に収める
+// 4. ベクトルをデータベースに保存
 const pgVector = new PgVector(process.env.POSTGRES_CONNECTION_STRING);
 await pgVector.upsert({
   indexName: "embeddings",
@@ -63,31 +63,31 @@ await pgVector.upsert({
 // 5. 関連する知識を検索
 const results = await pgVector.query({
   indexName: "embeddings",
-  queryVector: queryVector, // 質問のエネルギー
+  queryVector: queryVector, // 質問のベクトル
   topK: 3,
 });
 
-console.log("見つけた関連知識:", results);
+console.log("見つけた関連情報:", results);
 ```
 
-「うわぁ、難しそう...」と思ったかもしれませんね。でも大丈夫！これは単に「本を集めて→分けて→記憶して→必要な時に思い出す」という、私たちが日常的に行っていることを、コンピュータ言語で表現しただけなんです。一歩ずつ進めていきましょう！🚶‍♀️
+「うわぁ、難しそう...」と思ったかもしれませんね。でも大丈夫！これは単に「文書を集めて→分けて→数値化して→保存して→必要な時に取り出す」という、私たちが日常的に行っていることを、コンピュータ言語で表現しただけなんです。一歩ずつ進めていきましょう！🚶‍♀️
 
-## 魔法の書物を整える 📚✨
+## 文書を整理する 📚✨
 
-RAGの第一歩は、魔法の書物（ドキュメント）を集めることです。Mastraでは、`MDocument`という魔法の道具を使って、さまざまな形式の知識を取り込むことができます：
+RAGの第一歩は、文書（ドキュメント）を集めることです。Mastraでは、`MDocument`というツールを使って、さまざまな形式のデータを取り込むことができます：
 
 ```typescript
 const docFromText = MDocument.fromText("昔々あるところに...");
-const docFromHTML = MDocument.fromHTML("<html>魔法の王国の歴史...</html>");
-const docFromMarkdown = MDocument.fromMarkdown("# 魔法の基本原則...");
-const docFromJSON = MDocument.fromJSON(`{ "魔法": "火の呪文" }`);
+const docFromHTML = MDocument.fromHTML("<html>興味深い歴史...</html>");
+const docFromMarkdown = MDocument.fromMarkdown("# 基本原則...");
+const docFromJSON = MDocument.fromJSON(`{ "トピック": "重要な情報" }`);
 ```
 
-これはまるで、図書館の司書が様々な形式の本（テキスト、ウェブページ、マークダウン文書、データ集）を集めているようなものですね！📚
+これはまるで、図書館の司書が様々な形式の資料（テキスト、ウェブページ、マークダウン文書、データ集）を集めているようなものですね！📚
 
-### 知識を小さく分ける術 ✂️
+### 情報を小さく分ける技術 ✂️
 
-大きな書物をそのまま記憶するのは大変です。そこで、`chunk`という魔法で書物を小さな断片に分けます。Mastraは様々な分け方を知っていて、書物の種類に合わせた最適な分割方法を選べます：
+大きな文書をそのまま処理するのは大変です。そこで、`chunk`という機能で文書を小さな断片に分けます。Mastraは様々な分け方を知っていて、文書の種類に合わせた最適な分割方法を選べます：
 
 * `recursive` 🌲: 内容の構造を考慮した賢い分割（まるで目次から章、節へと分けるよう）
 * `character` 📏: シンプルに文字数で区切る方法
@@ -97,7 +97,7 @@ const docFromJSON = MDocument.fromJSON(`{ "魔法": "火の呪文" }`);
 * `json` 📊: データ構造に合わせた分割
 * `latex` 📑: 学術論文などの特殊な形式に合わせた分割
 
-例えば、賢い分割方法（recursive）を使うにはこんな魔法の呪文を唱えます：
+例えば、賢い分割方法（recursive）を使うにはこんなコードを書きます：
 
 ```typescript
 const chunks = await doc.chunk({
@@ -106,18 +106,18 @@ const chunks = await doc.chunk({
   overlap: 50,            // 少し重複させて、文脈を失わないように
   separator: "\n",        // 段落ごとに区切るのがいいかも
   extract: {
-    metadata: true,       // 書物の情報（著者、日付など）も取っておく
+    metadata: true,       // 文書の情報（著者、日付など）も取っておく
   },
 });
 ```
 
-こうして、大きな魔法書が読みやすい小さなページに分かれました。これで記憶するのも、必要な部分を探すのも簡単になります！🧠✨
+こうして、大きな文書が読みやすい小さなページに分かれました。これで処理するのも、必要な部分を探すのも簡単になります！🧠✨
 
-## 魔法のエネルギーへの変換 💫
+## ベクトル変換プロセス 💫
 
-さて、集めた知識の断片を魔法のエネルギー（ベクトル埋め込み）に変換しましょう。これは言葉の意味を数値の配列に変換する、まさに「言葉を魔法のエネルギーに変える」神秘的な過程です！
+さて、集めた情報の断片をベクトル（ベクトル埋め込み）に変換しましょう。これは言葉の意味を数値の配列に変換する、「言葉を数値データに変える」重要なプロセスです！
 
-### OpenAIの魔法で変換する場合 🔮
+### OpenAIのモデルで変換する場合 🔮
 
 ```typescript
 import { openai } from "@ai-sdk/openai";
@@ -129,7 +129,7 @@ const { embeddings } = await embedMany({
 });
 ```
 
-### Cohereの魔法で変換する場合 🌈
+### Cohereのモデルで変換する場合 🌈
 
 ```typescript
 import { embedMany } from 'ai';
@@ -141,37 +141,37 @@ const { embeddings } = await embedMany({
 });
 ```
 
-この魔法が生み出すのは、テキストの意味を表す数字の配列。人間には単なる数字の羅列に見えますが、コンピューターにとっては「ああ、これは猫についての文章で、これは天気についての文章だ」と意味を理解できる、魔法のエネルギーなのです。✨
+この処理が生み出すのは、テキストの意味を表す数字の配列。人間には単なる数字の羅列に見えますが、コンピューターにとっては「ああ、これは猫についての文章で、これは天気についての文章だ」と意味を理解できる、重要なデータなのです。✨
 
-## 魔法の記憶庫 🏰
+## ベクトルデータベース 🏰
 
-エネルギーに変換した知識は、特別な魔法の記憶庫（ベクトルデータベース）に保管します。Mastraは様々な記憶庫と連携できるので、あなたの冒険に最適なものを選べます！
+ベクトルに変換した情報は、特別なデータベース（ベクトルデータベース）に保管します。Mastraは様々なデータベースと連携できるので、あなたのプロジェクトに最適なものを選べます！
 
-### 選べる魔法の記憶庫 🗄️
+### 選べるベクトルデータベース 🗄️
 
-- **PostgreSQL with pgvector** 🐘: すでにPostgreSQLという魔法を使っている冒険者に最適
-- **Pinecone** 🌲: 大量の記憶を高速に検索したい上級魔法使いに
-- **Qdrant** ⚡: パワフルな魔法検索が必要な時に
-- **Chroma** 🌈: 誰でも使える魔法の記憶庫
-- **Astra DB** 🌠: 雲の上の魔法図書館
-- **LibSQL** 📱: 小さな装置でも使える軽量な魔法記憶庫
-- **Upstash** ☁️: サーバーレスな魔法の世界で
-- **Cloudflare Vectorize** 🌐: 世界中どこでも高速アクセスできる魔法の記憶庫
+- **PostgreSQL with pgvector** 🐘: すでにPostgreSQLを使っているプロジェクトに最適
+- **Pinecone** 🌲: 大量のデータを高速に検索したい上級ユーザーに
+- **Qdrant** ⚡: パワフルな検索機能が必要な時に
+- **Chroma** 🌈: 誰でも使える汎用的なデータベース
+- **Astra DB** 🌠: クラウドベースのデータベース
+- **LibSQL** 📱: 小規模プロジェクトでも使える軽量なデータベース
+- **Upstash** ☁️: サーバーレス環境での利用に
+- **Cloudflare Vectorize** 🌐: 世界中どこでも高速アクセスできるデータベース
 
-例えば、PostgreSQLという魔法の記憶庫を使うなら、こんな魔法の呪文を唱えます：
+例えば、PostgreSQLというデータベースを使うなら、こんなコードを書きます：
 
 ```typescript
 import { PgVector } from '@mastra/pg';
 
 const store = new PgVector(process.env.POSTGRES_CONNECTION_STRING);
 
-// 記憶庫の棚を準備
+// データベースのインデックスを準備
 await store.createIndex({
   indexName: "my-collection",
-  dimension: 1536,  // 魔法のエネルギーの大きさ
+  dimension: 1536,  // ベクトルの次元数
 });
 
-// 記憶を収納
+// データを保存
 await store.upsert({
   indexName: "my-collection",
   vectors: embeddings,
@@ -185,9 +185,9 @@ await store.upsert({
 });
 ```
 
-### 記憶の整理術 📋
+### メタデータの活用 📋
 
-魔法の記憶には、「どの本から来たか」「いつの情報か」といった情報（メタデータ）をつけておくと、後で探しやすくなります。これは図書館で本に「分類ラベル」や「出版日」を記録するようなものです：
+ベクトル化した情報には、「どの文書から来たか」「いつの情報か」といった補足情報（メタデータ）をつけておくと、後で探しやすくなります。これは図書館で本に「分類ラベル」や「出版日」を記録するようなものです：
 
 ```typescript
 await vectorStore.upsert({
@@ -197,7 +197,7 @@ await vectorStore.upsert({
     // 基本情報
     text: chunk.text,
     id: chunk.id,
-    // 書物の整理情報
+    // 文書の整理情報
     source: chunk.source,
     category: chunk.category,
     // 時間の記録
@@ -210,254 +210,389 @@ await vectorStore.upsert({
 });
 ```
 
-これで魔法の記憶庫に、きちんと整理された知識が保管されました。「魔法の火属性の呪文だけ」「去年書かれた情報だけ」などと指定して検索できるようになります！📚✨
+これでデータベースに、きちんと整理された情報が保管されました。「特定のトピックに関する情報だけ」「去年書かれた情報だけ」などと指定して検索できるようになります！📚✨
 
-## 魔法の知識を呼び出す 🔍
+## 保存した情報を活用する 🔍
 
-さあ、保管した魔法の知識を実際に使ってみましょう！質問が来たら、関連する記憶を呼び出して、最適な回答を作る冒険の始まりです。
+さあ、保管した情報を実際に使ってみましょう！質問が来たら、関連する情報を呼び出して、最適な回答を作る作業の始まりです。
 
-### 基本的な記憶検索 🧙‍♂️
+### 基本的な情報検索 🧠
 
-最もシンプルな方法は、質問を同じく魔法のエネルギーに変換して、似たエネルギーを持つ記憶を探す方法です：
+最もシンプルな方法は、質問を同じくベクトルに変換して、似たベクトルを持つ情報を探す方法です：
 
 ```typescript
 import { openai } from "@ai-sdk/openai";
 import { embed } from "ai";
 import { PgVector } from "@mastra/pg";
 
-// 質問を魔法のエネルギーに変換
+// 質問をベクトルに変換
 const { embedding } = await embed({
-  value: "ドラゴンを倒す最善の方法は？",
+  value: "最も効果的な学習方法は？",
   model: openai.embedding('text-embedding-3-small'),
 });
 
-// 魔法の記憶庫から関連知識を検索
+// データベースから関連情報を検索
 const pgVector = new PgVector(process.env.POSTGRES_CONNECTION_STRING);
 const results = await pgVector.query({
   indexName: "embeddings",
   queryVector: embedding,
-  topK: 10,  // 10個の関連記憶を呼び出す
+  topK: 10,  // 10個の関連情報を呼び出す
 });
 ```
 
-すると、このような関連知識が返ってきます：
+すると、このような関連情報が返ってきます：
 
 ```typescript
 [
   {
-    text: "ドラゴンは鱗の下が弱点です...",
+    text: "アクティブラーニングが最も効果的な学習方法の一つです...",
     score: 0.89,  // 89%の関連性！
-    metadata: { source: "dragon-manual.txt" }
+    metadata: { source: "learning-methods.txt" }
   },
   {
-    text: "炎のブレスに対抗するには魔法の盾が効果的...",
-    score: 0.82,
-    metadata: { source: "dragon-manual.txt" }
+    text: "反復学習と間隔を空けた復習は記憶定着に効果的です...",
+    score: 0.85,
+    metadata: { source: "memory-techniques.txt" }
   }
-  // ... その他の知識
 ]
 ```
 
-これで質問に最も関連する魔法の知識が手に入りました！まるで「ドラゴン退治の専門家」に質問しているようですね！🐉
+すごいですね！質問に関連する情報がすぐに見つかりました。まるで優秀な図書館員が「この質問に関する資料はこちらです」と素早く関連書籍を持ってきてくれるようなものです。
 
-### 記憶の選別術 🧠
+### 高度な検索テクニック 📊
 
-時には、特定の本や分野からだけ知識を引き出したいこともあるでしょう。そんな時はメタデータフィルタリングという魔法で、記憶を選別できます：
+単純な検索だけでなく、より複雑な条件でフィルタリングすることもできます：
 
 ```typescript
-// 特定の書物からだけ知識を取り出す
+// メタデータを使ったフィルタリング付き検索
 const results = await pgVector.query({
   indexName: "embeddings",
   queryVector: embedding,
-  topK: 10,
-  filter: { source: "dragon-manual.txt" }  // ドラゴン専門の本だけから
-});
-
-// 価格が100ゴールド以上のアイテムについての知識だけ
-const results = await pgVector.query({
-  indexName: "embeddings",
-  queryVector: embedding,
-  topK: 10,
-  filter: { price: { $gt: 100 } }
-});
-
-// より複雑な条件で絞り込む
-const results = await pgVector.query({
-  indexName: "embeddings",
-  queryVector: embedding,
-  topK: 10,
   filter: {
-    category: "electronics",  // 電子機器についての
-    price: { $lt: 1000 },     // 1000ゴールド未満の
-    inStock: true             // 在庫がある商品だけ
-  }
+    // カテゴリが「学習法」の情報だけを検索
+    category: "学習法",
+    // 2023年以降に作成された情報に限定
+    createdAt: { $gte: "2023-01-01T00:00:00Z" },
+  },
+  topK: 5,
 });
 ```
 
-これで必要な記憶だけを精密に取り出せるようになりました！いらない情報に惑わされることなく、最適な答えを見つけられます。🎯
+これで「学習法」カテゴリの最新情報だけが取得できます。古い情報や関係ないカテゴリの情報はスキップされるため、より精度の高い結果が得られます！
 
-### 記憶の再評価 ⚖️
+### ハイブリッド検索 - さらに精度を高める 🔍
 
-初めに見つけた記憶が、必ずしも最適とは限りません。そこで登場するのが「再ランキング」という高度な魔法。これは「まずざっと関連しそうな記憶を集めて、その後じっくり評価し直す」という二段階の魔法です：
+ベクトル検索とキーワード検索を組み合わせた「ハイブリッド検索」も可能です。これにより、「意味的に近いけど、特定のキーワードが含まれていない」という情報も見つけられます：
 
 ```typescript
-import { openai } from "@ai-sdk/openai";
-import { rerank } from "@mastra/rag";
-
-// まずは幅広く記憶を検索
-const initialResults = await pgVector.query({
+// ハイブリッド検索の例
+const results = await vectorStore.hybridSearch({
   indexName: "embeddings",
-  queryVector: queryEmbedding,
+  query: "効果的な学習方法",  // キーワード検索部分
+  queryVector: embedding,    // 意味検索部分
+  alpha: 0.7,                // ベクトル検索の重み（0-1）
   topK: 10,
 });
-
-// 集めた記憶を、より賢い魔法で再評価
-const rerankedResults = await rerank(initialResults, query, openai('gpt-4o-mini'));
 ```
 
-これにより、単純な類似度では見逃していた「実は最も関連が深い」知識が浮かび上がってきます。まるで「熟練の司書が本を厳選してくれる」ような、高度な魔法です！📚✨
+このように、単語の一致だけでなく、意味的な関連性も考慮した検索ができるようになります。例えば「効果的な学習方法」で検索すると、「効率的な勉強テクニック」という似た意味の情報も見つけられるのです！
 
-## 魔法の知識を持つアシスタントの創造 🧙‍♀️
+## RAGとエージェントの組み合わせ 🤖
 
-いよいよ、集めた魔法の知識を使いこなす「RAGエージェント」を作りましょう！これは、自分の記憶と外部の知識を組み合わせて答えを出す、賢い魔法使いのようなものです：
+RAGをエージェントに統合することで、「知識を持ったエージェント」が作れます。これが実践的なRAGエージェントの例です：
 
 ```typescript
+import { Agent } from "@mastra/core/agent";
 import { openai } from "@ai-sdk/openai";
-import { createVectorQueryTool } from "@mastra/rag";
-import { Agent } from "@mastra/core";
+import { createRAGTool } from "@mastra/rag/tools";
 import { PgVector } from "@mastra/pg";
-import { PGVECTOR_PROMPT } from "@mastra/rag";
 
-// 魔法の記憶庫を準備
-const pgVector = new PgVector(process.env.POSTGRES_CONNECTION_STRING);
+// ベクトルストアの設定
+const vectorStore = new PgVector(process.env.POSTGRES_CONNECTION_STRING);
 
-// 記憶を検索する魔法の道具を作成
-const vectorQueryTool = createVectorQueryTool({
-  vectorStoreName: 'pgVector',
-  indexName: 'embeddings',
+// RAGツールの作成
+const ragTool = createRAGTool({
+  id: "knowledgeBase",
+  description: "学習方法に関する質問に答えるための知識ベース",
+  vectorStore,
+  indexName: "learning-methods",
   model: openai.embedding('text-embedding-3-small'),
+  topK: 5,
 });
 
-// 魔法使いの創造
-export const ragAgent = new Agent({
-  name: '知識の魔法使い',
-  model: openai('gpt-4o-mini'),
-  instructions: `
-    あなたは膨大な知識を持つ賢者です。
-    提供された情報を元に、正確で役立つ回答を作ってください。
-    わからないことは正直に「わかりません」と答えましょう。
-    ${PGVECTOR_PROMPT}
-  `,
-  tools: { vectorQueryTool },
+// エージェントの定義
+const learningAdvisorAgent = new Agent({
+  name: "Learning Advisor",
+  instructions: `あなたは学習アドバイザーです。ユーザーの学習に関する質問に、知識ベースの情報を活用して回答してください。
+  知識ベースに情報がない場合は、その旨を正直に伝え、一般的なアドバイスを提供してください。`,
+  model: openai("gpt-4o"),
+  tools: {
+    ragTool,
+  },
 });
+
+// エージェントの使用例
+const response = await learningAdvisorAgent.generate(
+  "プログラミングを効率よく学ぶための方法は？"
+);
+console.log(response.text);
 ```
 
-これで完成したRAGエージェントは、質問に対して自分の基本知識と、あなたが用意した特別な魔法の書物の知識を組み合わせて、より正確で信頼性の高い回答を作れるようになりました！🧠✨
+このエージェントに質問すると、次のような流れで処理されます：
 
-## 上級魔法：思考の連鎖 🔄
+1. エージェントが質問を受け取る（「プログラミングを効率よく学ぶ方法は？」）
+2. ragToolがこの質問をベクトル化し、データベースで関連情報を検索
+3. 検索結果が「コンテキスト」としてエージェントに提供される
+4. エージェントはこのコンテキストを参考に、より正確な回答を生成
 
-より難しい質問に対応するために、「思考の連鎖（Chain of Thought）」という上級魔法もあります。これは「まず問題を分析し→計画を立て→情報を集め→評価して→最終的に答える」という、人間の思考プロセスを模倣した高度な魔法です：
+この仕組みにより、エージェントは自分の事前学習データだけでなく、あなたの用意した特定の知識ベースも活用できるようになります。結果として、より正確で、最新で、そして具体的な回答ができるようになるのです！
+
+## RAGチューニングのベストプラクティス 🛠️
+
+RAGシステムをより効果的にするためのいくつかのテクニックを紹介します：
+
+### 1. チャンクサイズの最適化 📏
+
+チャンクの大きさは重要です。大きすぎると不要な情報も含まれますが、小さすぎると文脈が失われます。通常、300〜500トークン程度が良いバランスですが、文書の種類によって調整する必要があります：
 
 ```typescript
-import { Workflow } from "@mastra/core";
-import { openai } from "@ai-sdk/openai";
-
-const cotRagWorkflow = new Workflow({
-  name: "思考の連鎖",
-});
-
-// ステップ1: 問題を分析し、検索戦略を考える
-cotRagWorkflow.step({
-  name: "query-analysis",
-  execute: async ({ input }) => {
-    const analysis = await openai("gpt-4o-mini").generate({
-      messages: [
-        { role: "system", content: "質問を深く分析し、どんな情報が必要か考えてください" },
-        { role: "user", content: input.query }
-      ]
-    });
-    return { analysis: analysis.content, query: input.query };
-  }
-});
-
-// ステップ2: 実際に情報を検索
-cotRagWorkflow.step({
-  name: "retrieval",
-  after: ["query-analysis"],
-  execute: async ({ input, tools }) => {
-    const results = await tools.vectorQueryTool(input.query);
-    return { ...input, results };
-  }
-});
-
-// ステップ3: 集めた情報を評価し、足りない点を確認
-cotRagWorkflow.step({
-  name: "evaluation",
-  after: ["retrieval"],
-  execute: async ({ input }) => {
-    const evaluation = await openai("gpt-4o-mini").generate({
-      messages: [
-        { role: "system", content: "集めた情報を評価し、不足している点を指摘してください" },
-        { role: "user", content: `質問: ${input.query}\n\n検索結果: ${JSON.stringify(input.results)}` }
-      ]
-    });
-    return { ...input, evaluation: evaluation.content };
-  }
-});
-
-// ステップ4: 最終的な回答を作成
-cotRagWorkflow.step({
-  name: "answer-generation",
-  after: ["evaluation"],
-  execute: async ({ input }) => {
-    const answer = await openai("gpt-4o-mini").generate({
-      messages: [
-        { role: "system", content: "すべての情報を考慮して、最高の回答を作成してください" },
-        { role: "user", content: `質問: ${input.query}\n\n検索結果: ${JSON.stringify(input.results)}\n\n評価: ${input.evaluation}` }
-      ]
-    });
-    return { answer: answer.content };
-  }
-});
+// 文書タイプに応じたチャンク戦略
+if (documentType === 'technicalManual') {
+  // 技術マニュアルには小さめのチャンク
+  return {
+    strategy: 'recursive',
+    size: 300,
+    overlap: 30,
+  };
+} else if (documentType === 'narrative') {
+  // 物語には大きめのチャンク（文脈を保持）
+  return {
+    strategy: 'recursive',
+    size: 600,
+    overlap: 100,
+  };
+}
 ```
 
-これは複数の魔法使いが協力して問題を解決するような、高度な魔法のコラボレーションです。一人では思いつかない完璧な答えが生まれる秘訣ですね！🧙‍♂️🧙‍♀️
+### 2. メタデータと構造の活用 📋
 
-## 魔法を極めるための秘訣 💯
+メタデータを賢く使えば、検索精度が向上します：
 
-RAGの魔法をマスターするための、賢者たちの秘伝を伝授します：
+```typescript
+// メタデータを強化する例
+const enhancedMetadata = {
+  ...basicMetadata,
+  // 章や節の情報を追加
+  chapter: extractChapter(text),
+  section: extractSection(text),
+  // 読みやすさレベルを追加
+  readabilityScore: calculateReadability(text),
+  // 自動カテゴリ分類
+  autoCategory: await categorizeText(text),
+};
+```
 
-1. **魔法の断片の大きさ** 📏:
-   - 小さすぎると文脈が失われる
-   - 大きすぎると精度が下がる
-   - コンテンツの種類に合わせて調整（通常は256〜1024トークン）
-   - 賢者の助言：「本の一章丸ごとではなく、数段落程度が最適」
+### 3. 検索結果の再ランキング 🏆
 
-2. **魔法の記憶の整理術** 🗂️:
-   - 書物の出所、作成日、カテゴリなどの情報を活用
-   - 検索範囲を絞って、より精度の高い回答を
-   - 賢者の助言：「整理された図書館からは、最高の知識が見つかる」
+検索結果を取得した後、さらに最適な順序に並べ替えることができます：
 
-3. **記憶の選別の技** 🔍:
-   - より多くの候補を集めてから、最良のものを選ぶ
-   - 賢者の助言：「100の本を軽く見てから、最適な10冊を精読する」
+```typescript
+// 単純な検索
+const initialResults = await vectorStore.query({
+  indexName: "my-docs",
+  queryVector: embedding,
+  topK: 15, // より多くの候補を取得
+});
 
-4. **魔法使いへの伝え方** 📢:
-   - 集めた知識をLLMに効果的に伝える言葉選び
-   - 引用や出典を明記するよう指示
-   - 賢者の助言：「魔法使いにも、明確な指示が必要」
+// 追加のフィルタリングと再ランキング
+const rerankedResults = initialResults
+  // 関連性スコアが低すぎるものを除外
+  .filter(result => result.score > 0.75)
+  // 日付が新しいものを優先
+  .sort((a, b) => {
+    // まず関連性で並べ替え
+    const relevanceDiff = b.score - a.score;
+    if (Math.abs(relevanceDiff) > 0.1) return relevanceDiff;
+    
+    // 関連性が近い場合は日付で並べ替え
+    return new Date(b.metadata.createdAt) - new Date(a.metadata.createdAt);
+  })
+  // 上位5つだけを使用
+  .slice(0, 5);
+```
 
-5. **魔法の効果測定** 📊:
-   - 検索精度、回答の正確さ、幻覚（実際には存在しない情報）の発生率をチェック
-   - 継続的に改善
-   - 賢者の助言：「真の魔法使いは、自らの魔法を常に磨き続ける」
+### 4. ユーザーフィードバックの活用 👍
 
-## まとめ：知識の魔法、習得完了！ 🎓✨
+ユーザーからのフィードバックをRAGシステムの改善に活用することも重要です：
 
-おめでとうございます！RAG（検索拡張生成）という強力な魔法の基礎を学び終えました。この魔法は、AIの魔法使い（LLM）の能力を、あなた独自の魔法書（データソース）と組み合わせることで、より正確で信頼できる応答を生み出す素晴らしい技術です。
+```typescript
+// フィードバックを記録する関数
+async function recordFeedback(query, results, feedback) {
+  await db.insertFeedback({
+    query,
+    results: results.map(r => r.id),
+    rating: feedback.rating,
+    comment: feedback.comment,
+    timestamp: new Date(),
+  });
+  
+  // 特に低評価のケースを分析用にログ
+  if (feedback.rating < 3) {
+    console.log(`低評価クエリ: ${query}`);
+    console.log(`返された結果: ${results.map(r => r.text).join('\n')}`);
+    console.log(`ユーザーコメント: ${feedback.comment}`);
+  }
+}
+```
 
-Mastraの魔法キットを使えば、書物の収集から断片化、エネルギー変換、記憶の保管、そして高度な検索まで、RAGの魔法を隅々まで実装できます。この魔法を習得することで、あなたのエージェントは、単なる一般的な知識だけではなく、あなた独自の情報も活用して、より賢く、より役立つ助言ができるようになります。
+こうしたフィードバックデータを分析することで、どのような質問でRAGが上手く機能していないかを特定し、システムを改善できます。
 
-「想像上の答え」から「確かな根拠に基づいた回答」へ。その変化は、まるで見習い魔法使いから賢者への成長のようです。
+## 実践的RAGアプリケーション 🚀
 
-今こそ、この章で学んだ魔法の技術とコツを活用して、あなただけの魔法の図書館を構築し、究極の魔法のアシスタントを創造する冒険に出発しましょう！🧙‍♂️📚✨ 
+最後に、Mastraを使った実践的なRAGアプリケーションの例を見てみましょう。これは社内ナレッジベースを作成し、従業員がチャットで質問できるようにするシステムです：
+
+```typescript
+import { Agent } from "@mastra/core/agent";
+import { createRAGTool } from "@mastra/rag/tools";
+import { createRouter } from "@ai-sdk/http";
+import { openai } from "@ai-sdk/openai";
+import { MDocument } from "@mastra/rag";
+import { PgVector } from "@mastra/pg";
+
+// 1. ベクトルストアの設定
+const vectorStore = new PgVector(process.env.DATABASE_URL);
+
+// 2. ドキュメント取り込み機能（管理者用）
+async function ingestDocument(fileUrl, metadata) {
+  // ファイルタイプに基づいてドキュメントを読み込む
+  let doc;
+  if (fileUrl.endsWith('.pdf')) {
+    const pdfContent = await fetchPdfContent(fileUrl);
+    doc = MDocument.fromText(pdfContent);
+  } else if (fileUrl.endsWith('.md')) {
+    const mdContent = await fetchContent(fileUrl);
+    doc = MDocument.fromMarkdown(mdContent);
+  } else {
+    const textContent = await fetchContent(fileUrl);
+    doc = MDocument.fromText(textContent);
+  }
+  
+  // メタデータを追加
+  doc.metadata = {
+    ...metadata,
+    source: fileUrl,
+    ingestedAt: new Date().toISOString(),
+  };
+  
+  // チャンク分割
+  const chunks = await doc.chunk({
+    strategy: "recursive",
+    size: 400,
+    overlap: 50,
+  });
+  
+  // ベクトル化して保存
+  const { embeddings } = await embedMany({
+    model: openai.embedding("text-embedding-3-small"),
+    values: chunks.map(chunk => chunk.text),
+  });
+  
+  await vectorStore.upsert({
+    indexName: "company-knowledge",
+    vectors: embeddings,
+    metadata: chunks.map((chunk, i) => ({
+      ...doc.metadata,
+      text: chunk.text,
+      chunkId: `${doc.metadata.id}-chunk-${i}`,
+    })),
+  });
+  
+  return {
+    status: "success",
+    documentId: doc.metadata.id,
+    chunkCount: chunks.length,
+  };
+}
+
+// 3. RAGツールの作成
+const companyKnowledgeTool = createRAGTool({
+  id: "companyKnowledge",
+  description: "会社の内部ドキュメント、ポリシー、手順に関する情報を提供します",
+  vectorStore,
+  indexName: "company-knowledge",
+  model: openai.embedding("text-embedding-3-small"),
+  topK: 5,
+  // メタデータフィルタリング機能を追加
+  metadataFilterBuilder: (query) => {
+    // クエリから部門名を抽出（簡易実装）
+    const departments = ["HR", "IT", "Finance", "Sales"];
+    const deptMatch = departments.find(dept => 
+      query.toLowerCase().includes(dept.toLowerCase())
+    );
+    
+    // 部門名が見つかった場合はフィルタを追加
+    return deptMatch 
+      ? { department: deptMatch } 
+      : {};
+  }
+});
+
+// 4. エージェントの定義
+const knowledgeAgent = new Agent({
+  name: "Company Knowledge Assistant",
+  instructions: `あなたは会社の知識アシスタントです。
+会社のポリシー、手順、ガイドラインに関する質問に対して、
+提供された知識ベースの情報を使って正確に回答してください。
+
+以下の原則を守ってください：
+1. 知識ベースに情報がある場合は、その情報に基づいて回答
+2. 情報がない場合は、その旨を率直に伝える
+3. 推測や不確かな情報は提供しない
+4. 機密情報や個人情報に関わる質問には適切に対応する
+5. 回答の根拠となる情報源（ドキュメント名）を示す
+
+知識ベースの情報更新日：${new Date().toISOString().split('T')[0]}`,
+  model: openai("gpt-4o"),
+  tools: {
+    companyKnowledgeTool,
+  },
+});
+
+// 5. APIエンドポイントの設定
+const router = createRouter({
+  agent: knowledgeAgent,
+});
+
+// エクスポート
+export { router as knowledgeRouter, ingestDocument };
+```
+
+このコードは、会社の内部ドキュメントを取り込み、従業員が質問できるチャットボットを作成するものです。特徴は：
+
+1. **多様な文書形式対応**: PDF、マークダウン、テキストなど様々な形式の文書を取り込める
+2. **メタデータフィルタリング**: 「HR部門のポリシーについて」といった質問では、自動的にHR関連文書だけを検索
+3. **情報の鮮度表示**: 知識ベースの更新日をユーザーに表示
+4. **APIエンドポイント**: フロントエンドアプリケーションから簡単に利用できる
+
+このようなシステムがあれば、新入社員のオンボーディングや、社内ポリシーの問い合わせ対応が格段に効率化されます。しかも、最新の情報に基づいた回答が得られるため、情報の正確性も向上するでしょう！
+
+## まとめ - RAGの可能性 🌟
+
+この章では、RAG（検索拡張生成）の基本から応用まで、幅広く学んできました：
+
+- RAGの基本概念と重要性
+- 文書の収集と前処理の方法
+- ベクトル埋め込みの仕組み
+- ベクトルデータベースの選択と使用法
+- 検索とフィルタリングの技術
+- エージェントとRAGの統合方法
+- 実践的なRAGアプリケーションの構築
+
+RAGは単なる技術ではなく、AIの新たな可能性を開く鍵です。これにより、あなたのエージェントは：
+
+- より正確で具体的な回答ができる
+- 最新の情報に基づいた助言ができる
+- 特定のドメイン知識を持った専門家になれる
+- ハルシネーション（幻覚・誤情報）を大幅に減らせる
+
+次の章では、Mastraのローカル開発環境について学び、実際にこれらの技術を試す方法を見ていきましょう。あなただけの知識豊かなAIエージェントを構築する冒険は、まだ始まったばかりです！ 
