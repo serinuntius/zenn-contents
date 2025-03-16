@@ -295,19 +295,15 @@ return {
 AIに特定の技術や言語のチートシートを生成させ、いつでも参照できるように保存：
 
 ```typescript
-await agent.runTool("save-cheatsheet", {
-    content: pythonCheatsheet,
-    outputPath: "./docs/cheatsheets/python.md",
-    section: "Python基本文法",
-});
+// Pythonの基本文法についてのチートシートを生成し保存
+const pythonBasicResponse = await agent.generate(
+    "Python基本文法についてのチートシートを作成し、./docs/cheatsheets/python.md に保存してください。"
+);
 
 // 後で別のセクションを追加
-await agent.runTool("save-cheatsheet", {
-    content: pythonAdvancedCheatsheet,
-    outputPath: "./docs/cheatsheets/python.md",
-    section: "Python高度な機能",
-    append: true,
-});
+const pythonAdvancedResponse = await agent.generate(
+    "Python高度な機能についてのチートシートを作成し、既存の./docs/cheatsheets/python.mdファイルに追加してください。"
+);
 ```
 
 ### 2. プロジェクト固有の情報整理
@@ -315,10 +311,9 @@ await agent.runTool("save-cheatsheet", {
 特定のプロジェクトやAPIの使い方をまとめて、チーム全体で共有：
 
 ```typescript
-await agent.runTool("save-cheatsheet", {
-    content: await agent.generate("私たちのプロジェクトのAPI仕様をチートシート形式でまとめて"),
-    outputPath: "./docs/project-api-cheatsheet.md",
-});
+const apiCheatsheetResponse = await agent.generate(
+    "私たちのプロジェクトのAPI仕様をチートシート形式でまとめて、./docs/project-api-cheatsheet.mdに保存してください。"
+);
 ```
 
 ### 3. 大規模なチートシートの分割生成
@@ -327,21 +322,18 @@ await agent.runTool("save-cheatsheet", {
 
 ```typescript
 // 3つのセクションに分けて生成
-for (let i = 0; i < 3; i++) {
-    const prompt = `TypeScriptチートシートのパート${i+1}/3を生成してください。${
-        i === 0 ? "基本文法" : i === 1 ? "中級テクニック" : "高度な型システム"
-    }に焦点を当ててください。`;
+const sections = ["基本文法", "中級テクニック", "高度な型システム"];
+
+for (let i = 0; i < sections.length; i++) {
+    const isFirstSection = i === 0;
     
-    const content = await agent.generate(prompt);
+    const prompt = `TypeScriptの${sections[i]}に関するチートシートを作成し、` +
+        `./docs/typescript-cheatsheet.mdに${isFirstSection ? '保存' : '追加'}してください。` +
+        `これは${i+1}/${sections.length}番目のセクションです。`;
     
-    await agent.runTool("save-cheatsheet", {
-        content: content.text,
-        outputPath: "./docs/typescript-cheatsheet.md",
-        section: i === 0 ? "基本文法" : i === 1 ? "中級テクニック" : "高度な型システム",
-        append: i > 0,
-        sectionIndex: i,
-        totalSections: 3,
-    });
+    const response = await agent.generate(prompt);
+    
+    console.log(`${sections[i]}セクションを${isFirstSection ? '作成' : '追加'}しました。`);
 }
 ```
 

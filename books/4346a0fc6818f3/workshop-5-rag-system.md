@@ -1,5 +1,5 @@
 ---
-title: "第5章：RAGツールの実装（tools/rag）"
+title: "第7章：RAGツールの実装（tools/rag）"
 ---
 
 # RAGツールで知識を強化しよう！🧠✨
