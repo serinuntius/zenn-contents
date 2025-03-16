@@ -96,4 +96,11 @@ logger: createLogger({
 
 次の章では、AIモデルの設定と活用方法について学んでいきます。さまざまなAIモデル（Google Gemini、Claude、OpenAIなど）の設定方法やAPIキーの管理、モデル選択の基準について詳しく解説します。
 
+> 📘 **完全なコードを確認したい方へ**
+> 
+> 本書で開発するGitHubリポジトリ解析エージェントの完全な実装は、以下のリポジトリで確認できます：
+> [https://github.com/serinuntius/github-cursor-rules-agent](https://github.com/serinuntius/github-cursor-rules-agent)
+> 
+> このリポジトリには、本書の各章で説明するすべてのコードが実際に動作する形で含まれています。学習の参考にご活用ください。
+
 準備はいいですか？次のステップに進みましょう！🚀 

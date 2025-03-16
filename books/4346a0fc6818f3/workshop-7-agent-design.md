@@ -54,25 +54,6 @@ const memory = new Memory({
         },
         workingMemory: {
             enabled: true, // ワーキングメモリを有効化
-            template: `
-# リポジトリ情報
-リポジトリパス: {{repositoryPath}}
-主要言語: {{mainLanguage}}
-
-# 分析ステータス
-クローン: {{cloneCompleted}}
-READMEの分析: {{readmeCompleted}}
-言語統計: {{tokeiCompleted}}
-ディレクトリ構造: {{directoryStructureCompleted}}
-重要ファイル特定: {{importantFilesCompleted}}
-ファイル処理: {{fileProcessingCompleted}}
-
-# 重要ファイル
-{{importantFiles}}
-
-# 処理済みファイル
-{{processedFiles}}
-            `,
         },
     },
 });
@@ -118,15 +99,6 @@ semanticRecall: {
 ```typescript
 workingMemory: {
     enabled: true, // ワーキングメモリを有効化
-    template: `
-# リポジトリ情報
-リポジトリパス: {{repositoryPath}}
-主要言語: {{mainLanguage}}
-
-# 分析ステータス
-クローン: {{cloneCompleted}}
-...
-    `,
 },
 ```
 
