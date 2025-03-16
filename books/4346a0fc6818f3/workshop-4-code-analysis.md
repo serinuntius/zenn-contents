@@ -268,6 +268,7 @@ function analyzeTreeJson(treeJson: any): {
         fileCount,
     };
 }
+```
 
 一見すると複雑に見えるかもしれませんが、少しずつ解説していくと、どうして特定の要素が実装されているのかがわかってきますよ。では、このツールの重要な部分を詳しく見ていきましょう！
 
@@ -670,100 +671,120 @@ JSON形式での回答のみ返してください：
 }
 ```
 
-この柔軟な探索アプローチにより、異なるプロジェクト間でも一貫して動作します。READMEファイルの命名規則は統一されていないため、この機能は実際のリポジトリ解析では非常に重要です！
+## README解析ツールの仕組みを解説 📋
 
-### 2. Mastra RAGライブラリの活用 🧩
+### 1. 複数のREADMEフォーマットに対応 📖
 
-このツールはMastraの強力なRAG（Retrieval Augmented Generation）ライブラリを使っています：
-
-```typescript
-// マークダウンとして解析
-const doc = MDocument.fromMarkdown(readmeContent);
-
-// チャンキング
-const chunks = await doc.chunk({
-    strategy: "markdown",
-    size: 1000,
-    overlap: 100,
-});
-```
-
-`MDocument`クラスはマークダウンドキュメントの解析と処理を簡単にしてくれます。さらに、`chunk`メソッドを使うことで、マークダウンの構造を尊重しながらドキュメントを適切なサイズに分割します。これにより、大きなREADMEファイルも効率的に処理できるのです！
-
-### 3. 正規表現を活用した情報抽出 🔍
-
-READMEから情報を抽出するために、このツールは様々な正規表現パターンを使っています：
+READMEファイルには様々な命名規則があります。このツールは、一般的なバリエーションをすべてカバーするよう設計されています：
 
 ```typescript
-// タイトルの抽出（最初の見出し）
-const titleMatch = content.match(/^#\s+(.+)$/m);
-const title = titleMatch ? titleMatch[1].trim() : "";
-
-// 説明の抽出（タイトルの後の最初の段落）
-let description = "";
-const descriptionMatch = content.match(
-    /^#\s+.+\n+([^#\n].+(?:\n[^#\n].+)*)/m
-);
-if (descriptionMatch) {
-    description = descriptionMatch[1].trim();
-}
-
-// 技術スタックの検出
-const technologies: string[] = [];
-const techPatterns = [
-    /(?:tech(?:nolog(?:y|ies))?|stack|dependencies|built\s+with|powered\s+by|using)[^\n]*?:\s*([^\n]+)/i,
-    /##\s*(?:tech(?:nolog(?:y|ies))?|stack|dependencies|built\s+with|powered\s+by)[^\n]*\n+([^#]+)/i,
+// READMEファイルの候補リスト
+const readmeVariants = [
+    "README.md",
+    "Readme.md",
+    "readme.md",
+    "README",
+    "README.markdown",
+    "README.txt",
 ];
-```
 
-これらの正規表現パターンは、READMEの様々な書き方に対応できるよう慎重に設計されています。例えば、「Technologies:」や「Tech Stack」、「Built with」など、技術スタックを紹介する際の一般的な表現を全てカバーしています。
+// READMEファイルを探索
+let readmeContent = "";
+let readmePath = "";
 
-### 4. 多言語対応の考慮 🌏
-
-このツールは日本語と英語の両方のREADMEファイルに対応するよう設計されています：
-
-```typescript
-// インストール方法
-let installation = "";
-const installMatch = content.match(
-    /##\s*(?:インストール|installation|getting\s+started|setup)[^\n]*\n+([^#]+)/i
-);
-
-// 使用方法
-let usage = "";
-const usageMatch = content.match(
-    /##\s*(?:使用方法|usage|how\s+to\s+use)[^\n]*\n+([^#]+)/i
-);
-```
-
-「インストール」や「使用方法」といった日本語の見出しも認識できるため、日本語で書かれたREADMEファイルも解析できます。これはグローバルなプロジェクトを扱う際に特に重要です！
-
-### 5. 柔軟なライセンス検出ロジック 📜
-
-ライセンス情報は特に重要ですが、その記載方法はプロジェクトによって大きく異なります。このツールは複数のアプローチでライセンス情報を探します：
-
-```typescript
-// ライセンス
-let license = "";
-const licenseMatch = content.match(
-    /##\s*(?:ライセンス|license)[^\n]*\n+([^#]+)/i
-);
-if (licenseMatch && licenseMatch[1]) {
-    license = licenseMatch[1].trim();
-} else {
-    // ライセンスがセクションとして見つからない場合、単純な言及を探す
-    const simpleLicenseMatch = content.match(
-        /(?:ライセンス|license)[:：]\s*([A-Za-z0-9\s-]+)/i
-    );
-    if (simpleLicenseMatch && simpleLicenseMatch[1]) {
-        license = simpleLicenseMatch[1].trim();
+for (const variant of readmeVariants) {
+    const filePath = path.join(repositoryPath, variant);
+    try {
+        const stat = await fs.stat(filePath);
+        if (stat.isFile()) {
+            readmeContent = await fs.readFile(filePath, "utf-8");
+            readmePath = filePath;
+            break;
+        }
+    } catch (error) {
+        // ファイルが存在しない場合は次のバリアントを試す
+        continue;
     }
 }
 ```
 
-まず専用のセクションを探し、見つからなければ「License: MIT」のような簡潔な言及も検出します。この二段階のアプローチにより、様々な形式のライセンス情報を捕捉できます。
+この柔軟な探索アプローチにより、異なるプロジェクト間でも一貫して動作します。READMEファイルの命名規則は統一されていないため、この機能は実際のリポジトリ解析では非常に重要です！
 
-## readmeAnalyzerToolの活用シーン 💡
+### 2. ミニエージェントアーキテクチャの活用 🤖
+
+このツールの最も革新的な部分は、AIモデルを「ミニエージェント」として直接組み込んでいる点です：
+
+```typescript
+/**
+ * ミニエージェントの定義
+ *
+ * 注意: このファイル内で直接Agentを定義する理由：
+ * 循環参照の問題を回避するため。
+ */
+const miniAgent = new Agent({
+    model: google("gemini-2.0-flash-001"),
+    name: "miniAgent",
+    instructions:
+        "あなたはGitHubリポジトリを解析して、Cursor AIアシスタントのためのルールセット（チートシート）を生成するエージェントです。",
+});
+```
+
+この設計によって、以下のメリットが得られます：
+
+1. **スコープを限定した専用のAIエージェント**: READMEの解析に特化したエージェントにすることで、精度が高まります
+2. **循環参照の回避**: ツールとエージェント間の循環参照問題を解決しています
+3. **効率的な実装**: 単一ファイル内でエージェントを定義することで、依存関係を簡素化しています
+
+これは、Mastraフレームワークの柔軟性と強力さを示す良い例です。機能ごとに特化したミニエージェントを作成することで、システム全体の品質を向上させることができます。
+
+### 3. AIモデルによるデータ抽出アプローチ 🧠
+
+従来の正規表現ベースの解析ではなく、AIモデルを使ってREADMEの内容を理解し、構造化データとして抽出しています：
+
+```typescript
+async function extractMetadataWithAI(content: string): Promise<{/*...*/}> {
+    // ...
+    const promptText = `
+あなたはREADMEファイルから構造化されたメタデータを抽出する専門家です。
+以下のREADMEファイルの内容を解析し、JSONフォーマットで以下の情報を抽出してください：
+// ...`;
+
+    const result = await miniAgent
+        .generate(promptText)
+        .then((res) => res.text);
+    // ...
+}
+```
+
+このアプローチには以下の利点があります：
+
+1. **自然言語理解**: 厳密なフォーマットに依存せず、様々な表現スタイルから情報を抽出できます
+2. **柔軟な解釈**: READMEファイルの構造が異なっていても適応できます
+3. **言語に依存しない**: 英語、日本語、その他の言語でも機能します
+
+正規表現では捉えられない複雑なパターンも、AIモデルならば理解できます。例えば「このプロジェクトはReactとExpressを使っています」という文から、技術スタックとして["React", "Express"]を抽出できるのです。
+
+### 4. 堅牢なJSON抽出処理 🔍
+
+AIモデルから返されたデータを、期待される形式に正規化する処理も含まれています：
+
+```typescript
+// 必要なフィールドがあることを確認し、デフォルト値とマージ
+return {
+    ...defaultMetadata,
+    ...extractedData,
+    // 技術スタックが文字列の場合は配列に変換
+    technologies: Array.isArray(extractedData.technologies)
+        ? extractedData.technologies
+        : typeof extractedData.technologies === "string"
+          ? [extractedData.technologies]
+          : defaultMetadata.technologies,
+};
+```
+
+例えば、AIモデルが`technologies`を文字列として返した場合（"React, Node.js"）、これを自動的に配列（["React", "Node.js"]）に変換します。また、デフォルト値とマージすることで、AIモデルが特定のフィールドを返さなかった場合でも一貫した構造を維持できます。
+
+## README解析ツールの活用シーン 💡
 
 このツールは以下のような場面で特に役立ちます：
 
@@ -775,17 +796,17 @@ if (licenseMatch && licenseMatch[1]) {
 
 AIエージェントがこのツールを使うと、「このプロジェクトは何を目的としていますか？」「どのような技術が使われていますか？」「どうやってインストールすればいいですか？」といった質問に直接答えられるようになります。
 
-## readmeAnalyzerToolの実装ポイント 📌
+## README解析ツールの実装ポイント 📌
 
 このツールを実装する際のポイントをいくつか挙げておきましょう：
 
 1. **複数のファイル名バリエーションに対応**: README.md, Readme.md, README.txt など様々な命名規則をサポート
-2. **Mastra RAGライブラリの活用**: マークダウン解析とチャンキングに専用ライブラリを使用
-3. **柔軟な正規表現パターン**: 様々な書き方に対応できる幅広いパターンを用意
-4. **多言語対応**: 日本語と英語の両方のREADMEファイルを解析可能
-5. **フォールバックロジック**: 情報が見つからない場合の代替検索方法を実装
+2. **ミニエージェントアーキテクチャの採用**: 特定のタスクに特化したエージェントを内包する設計
+3. **AIモデルによる自然言語理解**: 正規表現よりも柔軟で高度な情報抽出が可能
+4. **堅牢なJSONパースロジック**: AIモデルの様々な出力形式に対応
+5. **データの正規化と前処理**: 一貫した形式でデータを返すための変換処理
 
-特に注目すべきは、このツールのコメントにもあるように、「実際のプロダクションでは、LLMを使ったより高度な抽出をするべき」という点です。現在の実装は正規表現ベースですが、将来的にはLLMを活用してさらに高度な理解を実現できるでしょう。
+特に注目すべきは、このツールが従来の静的な解析から、AIを活用した動的で理解に基づいた解析へと進化している点です。これにより、より高度で柔軟な情報抽出が可能になります。
 
 ## コード統計解析ツール (tokeiAnalyzerTool) 📊
 
