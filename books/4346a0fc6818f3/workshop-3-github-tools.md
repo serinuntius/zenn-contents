@@ -52,27 +52,25 @@ export const cloneOutputSchema = z
  */
 export const cloneRepositoryTool = createTool({
     id: "clone-repository",
-    description: "GitHub リポジトリをクローンします",
+    description: "GitHub リポジトリをクローンして、コード解析やファイル処理を可能にします",
     inputSchema: z.object({
         repositoryUrl: z
             .string()
-            .describe("リポジトリのURL（https://github.com/user/repo 形式）"),
+            .describe("リポジトリのURL（例: https://github.com/user/repo）- クローンするGitHubリポジトリを指定します"),
         branch: z
             .string()
             .optional()
-            .describe(
-                "クローンするブランチ（指定しない場合はデフォルトブランチ）"
-            ),
+            .describe("クローンするブランチ名。指定しない場合はデフォルトブランチになります。特定の機能に関するコードだけを分析したい場合に指定します"),
         includeLfs: z
             .boolean()
             .optional()
             .default(false)
-            .describe("Git LFSファイルも取得するか"),
+            .describe("Git LFSファイルも取得するか - 大規模なプロジェクトで依存リポジトリも分析したい場合はtrueにします"),
         includeSubmodules: z
             .boolean()
             .optional()
             .default(false)
-            .describe("サブモジュールも取得するか"),
+            .describe("サブモジュールも取得するか - 大規模なプロジェクトで依存リポジトリも分析したい場合はtrueにします"),
     }),
     outputSchema: cloneOutputSchema,
     execute: async ({ context }) => {
@@ -207,30 +205,93 @@ Zodを使用して、ツールの出力データの形式を定義していま�
 ```typescript
 export const cloneRepositoryTool = createTool({
     id: "clone-repository",
-    description: "GitHub リポジトリをクローンします",
+    description: "GitHub リポジトリをクローンして、コード解析やファイル処理を可能にします",
     inputSchema: z.object({
         repositoryUrl: z
             .string()
-            .describe("リポジトリのURL（https://github.com/user/repo 形式）"),
+            .describe("リポジトリのURL（例: https://github.com/user/repo）- クローンするGitHubリポジトリを指定します"),
         branch: z
             .string()
             .optional()
-            .describe(
-                "クローンするブランチ（指定しない場合はデフォルトブランチ）"
-            ),
+            .describe("クローンするブランチ名。指定しない場合はデフォルトブランチになります。特定の機能に関するコードだけを分析したい場合に指定します"),
         includeLfs: z
             .boolean()
             .optional()
             .default(false)
-            .describe("Git LFSファイルも取得するか"),
+            .describe("Git LFSファイルも取得するか - 大規模なプロジェクトで依存リポジトリも分析したい場合はtrueにします"),
         includeSubmodules: z
             .boolean()
             .optional()
             .default(false)
-            .describe("サブモジュールも取得するか"),
+            .describe("サブモジュールも取得するか - 大規模なプロジェクトで依存リポジトリも分析したい場合はtrueにします"),
     }),
     outputSchema: cloneOutputSchema,
-    // executeは後で説明
+    execute: async ({ context }) => {
+        const { repositoryUrl, branch, includeLfs, includeSubmodules } =
+            context;
+
+        try {
+            // リポジトリ名を取得
+            const repoName =
+                repositoryUrl.split("/").pop()?.replace(".git", "") || "repo";
+            const cloneDir = repoName;
+            const fullPath = path.resolve(process.cwd(), cloneDir);
+
+            // ディレクトリが既に存在するか確認
+            if (fs.existsSync(fullPath)) {
+                return {
+                    success: true,
+                    message: `ディレクトリ ${cloneDir} は既に存在するため、クローンをスキップしました。`,
+                    repositoryFullPath: fullPath,
+                    cloneDirectoryName: cloneDir,
+                };
+            }
+
+            // クローンコマンドを構築
+            let command = `git clone ${repositoryUrl}`;
+
+            // ブランチが指定されている場合
+            if (branch) {
+                command += ` -b ${branch}`;
+            }
+
+            // サブモジュールが必要な場合
+            if (includeSubmodules) {
+                command += ` --recurse-submodules`;
+            }
+
+            // ターゲットディレクトリを指定
+            command += ` ${cloneDir}`;
+
+            // コマンド実行
+            const { stdout, stderr } = await execAsync(command);
+
+            // LFSファイルが必要な場合
+            if (includeLfs) {
+                try {
+                    // ディレクトリに移動してLFSファイルを取得
+                    await execAsync(`cd ${cloneDir} && git lfs pull`);
+                } catch (error: any) {
+                    return {
+                        success: true,
+                        message: `リポジトリのクローンは成功しましたが、LFSファイルの取得に失敗しました: ${error.message}`,
+                        repositoryFullPath: fullPath,
+                        cloneDirectoryName: cloneDir,
+                    };
+                }
+            }
+
+            return {
+                success: true,
+                message: `リポジトリを ${fullPath} にクローンしました。`,
+                repositoryFullPath: fullPath,
+                cloneDirectoryName: cloneDir,
+            };
+        } catch (error: any) {
+            // エラーハンドリング部分は省略
+        }
+    },
+});
 ```
 
 ここでは、`createTool`関数を使用してツールを定義しています。主なプロパティは：
@@ -399,13 +460,115 @@ repositoryUrl: z
 
 GitHubリポジトリクローンツールから学べる設計のベストプラクティスをまとめてみましょう：
 
-1. **明確な入出力定義**: Zodを使って入力と出力を明確に定義
-2. **適切な粒度**: 一つの機能に特化したツールを作る（単一責任の原則）
-3. **堅牢なエラーハンドリング**: 失敗しても適切な情報を返す
-4. **オプションのサポート**: 必要に応じて機能を拡張できるオプションパラメータ
-5. **詳細なログ記録**: デバッグに役立つ情報をログに残す
+### 1. ツールの説明は目的と価値に焦点を当てる
 
-これらの原則に従うことで、再利用性が高く、メンテナンスしやすいツールを作成できます。
+ツールの主な説明は「何をするためのものか」という目的と、「どのような価値をもたらすか」に焦点を当てるべきです。
+
+```typescript
+export const cloneRepositoryTool = createTool({
+  id: "clone-repository",
+  description: "GitHub リポジトリをクローンして、コード解析やファイル処理を可能にします",
+  // ...
+});
+```
+
+✅ 良い例：シンプルで目的に焦点を当てている
+❌ 悪い例：「このツールはchild_processモジュールのexecを使ってgit cloneコマンドを実行します」（実装の詳細に触れすぎ）
+
+### 2. パラメータスキーマは自己説明的に
+
+技術的な詳細はパラメータスキーマに含め、AIエージェントがツールを正しく使用できるようにします。
+
+```typescript
+inputSchema: z.object({
+  repositoryUrl: z
+    .string()
+    .describe("リポジトリのURL（例: https://github.com/user/repo）- クローンするGitHubリポジトリを指定します"),
+  branch: z
+    .string()
+    .optional()
+    .describe("クローンするブランチ名。指定しない場合はデフォルトブランチになります。特定の機能に関するコードだけを分析したい場合に指定します"),
+  // ...
+}),
+```
+
+- パラメータには明確な説明を付ける
+- 必要に応じて例を含める
+- パラメータの選択が与える影響を説明する
+- デフォルト値とその意味を含める
+
+### 3. 明確な入出力定義
+
+Zodを使って入力と出力を明確に定義することで、AIモデルとの連携がスムーズになります。
+
+```typescript
+export const cloneOutputSchema = z
+  .object({
+    success: z.boolean().describe("クローン操作が成功したかどうか"),
+    message: z.string().describe("操作結果の詳細メッセージ"),
+    // ...
+  })
+  .describe("リポジトリクローン操作の結果");
+```
+
+### 4. 適切な粒度
+
+一つのツールは一つの機能に特化させるべきです（単一責任の原則）。例えば、リポジトリのクローンとコード解析は別々のツールに分けるのが良い設計です。
+
+### 5. 堅牢なエラーハンドリング
+
+失敗しても適切な情報を返すことで、エージェントが状況を理解し対応できるようにします。
+
+```typescript
+catch (error: any) {
+  // ...
+  return {
+    success: false,
+    message: `クローンに失敗しました: ${error.message}`,
+    // ...
+  };
+}
+```
+
+### 6. オプションのサポート
+
+必要に応じて機能を拡張できるオプションパラメータを提供します。
+
+```typescript
+includeSubmodules: z
+  .boolean()
+  .optional()
+  .default(false)
+  .describe("サブモジュールも取得するか - 大規模なプロジェクトで依存リポジトリも分析したい場合はtrueにします"),
+```
+
+### 7. エージェントとの相互作用パターンを考慮
+
+ツールが効果的に使用される可能性が高まるのは以下の場合です：
+
+- クエリやタスクがツールの支援を明確に必要とする十分な複雑さを持つ場合
+- ツールの目的がクエリのニーズに合致している場合
+- パラメータの要件がスキーマで適切に文書化されている場合
+
+### 8. よくある落とし穴を避ける
+
+- メイン説明に技術的な詳細を詰め込みすぎる
+- 使用ガイダンスと実装の詳細を混同する
+- パラメータの説明が不明確、または例が不足している
+- ツールの目的が広すぎて焦点がぼやける
+
+### 9. 詳細なログ記録
+
+デバッグに役立つ情報をログに残します。特に失敗した場合は、トラブルシューティングに必要な情報を記録しましょう。
+
+```typescript
+console.error(`クローンエラー: ${error.message}`);
+console.error(
+  `デバッグ情報: リポジトリURL=${repositoryUrl}, ブランチ=${branch || "default"}`
+);
+```
+
+これらの原則に従うことで、再利用性が高く、メンテナンスしやすく、AIエージェントが直感的に使用できるツールを作成できます。よく設計されたツールは、開発者とAIエージェントの両方にとって価値のある資産となります。
 
 ## ここまでのまとめ 📝
 

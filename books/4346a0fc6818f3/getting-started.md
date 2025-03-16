@@ -1,5 +1,5 @@
 ---
-title: "第2章：Getting Started - Mastra開発環境の構築"
+title: "第2章：Mastra開発環境の構築"
 ---
 
 # Mastra開発への第一歩を踏み出そう！
@@ -110,8 +110,10 @@ Ok to proceed? (y) y
     cd github-cursor-rules-agent
     npm run dev
 ```
+:::message
+上記のセットアップでは「Select default provider:」でOpenAIを選択していますが、動作確認は**GoogleのGemini**で十分です。ただし、本番でちゃんとした仕事で使えるレベルのアウトプットを目指すなら**Claude Sonnet 3.7**がオススメです。ただし、Claudeはコストがめちゃくちゃかかりますので注意が必要です。現在のMastraのセットアップウィザードではデフォルトでOpenAIが表示されると思います。この選択を行った後、プロジェクト内のコードを少し修正して別のモデルに切り替えることをお勧めします。各モデルを使用するための設定は後ほど説明します。
+:::
 
-> **注意**: 上記のセットアップでは「Select default provider:」でOpenAIを選択していますが、**GoogleのGemini API（特にFlash 2.0モデル）**が実はコストパフォーマンスと速度の面で最もおすすめです。ただし、現在のMastraのセットアップウィザードではデフォルトでOpenAIが表示されると思います。この選択を行った後、プロジェクト内のコードを少し修正してGeminiに切り替えることをお勧めします。Geminiを使用するための設定は後ほど説明します。
 
 ### APIキーの設定
 

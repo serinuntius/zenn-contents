@@ -468,7 +468,29 @@ import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 import fs from "fs/promises";
 import path from "path";
-import { MDocument } from "@mastra/rag";
+import { google } from "../../models";
+import { Agent } from "@mastra/core";
+
+/**
+ * ミニエージェントの定義
+ *
+ * 注意: このファイル内で直接Agentを定義する理由：
+ * 循環参照の問題を回避するため。
+ *
+ * 問題：
+ * 1. src/mastra/agents/index.tsがreadmeAnalyzerToolをインポート
+ * 2. readmeAnalyzerToolがAgentをインポートすると循環参照が発生
+ * 3. 「ReferenceError: Cannot access 'readmeAnalyzerTool' before initialization」エラーが発生
+ *
+ * 解決策：
+ * ローカルでAgentインスタンスを作成し、循環参照を断ち切る
+ */
+const miniAgent = new Agent({
+    model: google("gemini-2.0-flash-001"),
+    name: "miniAgent",
+    instructions:
+        "あなたはGitHubリポジトリを解析して、Cursor AIアシスタントのためのルールセット（チートシート）を生成するエージェントです。",
+});
 
 /**
  * README解析ツール
@@ -538,19 +560,8 @@ export const readmeAnalyzerTool = createTool({
                 };
             }
 
-            // マークダウンとして解析
-            const doc = MDocument.fromMarkdown(readmeContent);
-
-            // チャンキング
-            const chunks = await doc.chunk({
-                strategy: "markdown",
-                size: 1000,
-                overlap: 100,
-            });
-
-            // メタデータ抽出処理（ここでは単純なパターンマッチング）
-            // 実際のプロダクションでは、LLMを使ったより高度な抽出をするべき
-            const metadata = extractMetadata(readmeContent, chunks);
+            // AIモデルを使用してメタデータを抽出
+            const metadata = await extractMetadataWithAI(readmeContent);
 
             return {
                 success: true,
@@ -568,12 +579,9 @@ export const readmeAnalyzerTool = createTool({
 });
 
 /**
- * READMEファイルからメタデータを抽出する関数
+ * AIモデルを使用してREADMEファイルからメタデータを抽出する関数
  */
-function extractMetadata(
-    content: string,
-    chunks: any[]
-): {
+async function extractMetadataWithAI(content: string): Promise<{
     title: string;
     description: string;
     technologies: string[];
@@ -582,142 +590,82 @@ function extractMetadata(
     usage: string;
     contributing: string;
     license: string;
-} {
-    // タイトルの抽出（最初の見出し）
-    const titleMatch = content.match(/^#\s+(.+)$/m);
-    const title = titleMatch ? titleMatch[1].trim() : "";
-
-    // 説明の抽出（タイトルの後の最初の段落）
-    let description = "";
-    const descriptionMatch = content.match(
-        /^#\s+.+\n+([^#\n].+(?:\n[^#\n].+)*)/m
-    );
-    if (descriptionMatch) {
-        description = descriptionMatch[1].trim();
-    }
-
-    // 技術スタックの検出
-    const technologies: string[] = [];
-    const techPatterns = [
-        /(?:tech(?:nolog(?:y|ies))?|stack|dependencies|built\s+with|powered\s+by|using)[^\n]*?:\s*([^\n]+)/i,
-        /##\s*(?:tech(?:nolog(?:y|ies))?|stack|dependencies|built\s+with|powered\s+by)[^\n]*\n+([^#]+)/i,
-    ];
-
-    for (const pattern of techPatterns) {
-        const match = content.match(pattern);
-        if (match && match[1]) {
-            const techSection = match[1].trim();
-            const extracted = techSection
-                .split(/[,\n]/)
-                .map((t) => t.trim().replace(/[*-]/g, "").trim())
-                .filter(
-                    (t) =>
-                        t.length > 0 && !t.startsWith("(") && !t.startsWith("[")
-                );
-            technologies.push(...extracted);
-        }
-    }
-
-    // インストール方法
-    let installation = "";
-    const installMatch = content.match(
-        /##\s*(?:インストール|installation|getting\s+started|setup)[^\n]*\n+([^#]+)/i
-    );
-    if (installMatch && installMatch[1]) {
-        installation = installMatch[1].trim();
-    }
-
-    // 使用方法
-    let usage = "";
-    const usageMatch = content.match(
-        /##\s*(?:使用方法|usage|how\s+to\s+use)[^\n]*\n+([^#]+)/i
-    );
-    if (usageMatch && usageMatch[1]) {
-        usage = usageMatch[1].trim();
-    }
-
-    // アーキテクチャ
-    let architecture = "";
-    const archMatch = content.match(
-        /##\s*(?:アーキテクチャ|architecture|structure|design)[^\n]*\n+([^#]+)/i
-    );
-    if (archMatch && archMatch[1]) {
-        architecture = archMatch[1].trim();
-    }
-
-    // コントリビューション
-    let contributing = "";
-    const contribMatch = content.match(
-        /##\s*(?:コントリビュート|貢献|contributing|contribute)[^\n]*\n+([^#]+)/i
-    );
-    if (contribMatch && contribMatch[1]) {
-        contributing = contribMatch[1].trim();
-    }
-
-    // ライセンス
-    let license = "";
-    const licenseMatch = content.match(
-        /##\s*(?:ライセンス|license)[^\n]*\n+([^#]+)/i
-    );
-    if (licenseMatch && licenseMatch[1]) {
-        license = licenseMatch[1].trim();
-    } else {
-        // ライセンスがセクションとして見つからない場合、単純な言及を探す
-        const simpleLicenseMatch = content.match(
-            /(?:ライセンス|license)[:：]\s*([A-Za-z0-9\s-]+)/i
-        );
-        if (simpleLicenseMatch && simpleLicenseMatch[1]) {
-            license = simpleLicenseMatch[1].trim();
-        }
-    }
-
-    return {
-        title,
-        description,
-        technologies,
-        architecture,
-        installation,
-        usage,
-        contributing,
-        license,
+}> {
+    // デフォルト値を設定
+    const defaultMetadata = {
+        title: "",
+        description: "",
+        technologies: [],
+        architecture: "",
+        installation: "",
+        usage: "",
+        contributing: "",
+        license: "",
     };
-}
 
-このツールは、ディレクトリ構造を表示するtreeAnalyzerToolとは異なり、コンテンツの意味を理解することに焦点を当てています。人間なら「READMEを読んで、このプロジェクトは何をするものなのか」と簡単に理解できますが、AIにはそれが難しいのです。このツールを使えば、AIもREADMEの内容を構造化された形で理解できるようになります！
-
-## readmeAnalyzerToolの仕組みを解説 🔎
-
-### 1. 複数のREADMEファイル形式に対応 📋
-
-READMEファイルは命名規則がプロジェクトによって異なることがあります。このツールは複数のバリエーションをチェックします：
-
-```typescript
-// READMEファイルの候補リスト
-const readmeVariants = [
-    "README.md",
-    "Readme.md",
-    "readme.md",
-    "README",
-    "README.markdown",
-    "README.txt",
-];
-
-// READMEファイルを探索
-let readmeContent = "";
-let readmePath = "";
-
-for (const variant of readmeVariants) {
-    const filePath = path.join(repositoryPath, variant);
     try {
-        const stat = await fs.stat(filePath);
-        if (stat.isFile()) {
-            readmeContent = await fs.readFile(filePath, "utf-8");
-            readmePath = filePath;
-            break;
+        // AIモデル用のプロンプト
+        const promptText = `
+あなたはREADMEファイルから構造化されたメタデータを抽出する専門家です。
+以下のREADMEファイルの内容を解析し、JSONフォーマットで以下の情報を抽出してください：
+
+1. title: プロジェクトのタイトル（通常は最初の見出し）
+2. description: プロジェクトの簡潔な説明
+3. technologies: プロジェクトで使用されている技術スタックのリスト（配列形式）
+4. architecture: プロジェクトのアーキテクチャや構造の説明
+5. installation: インストール手順
+6. usage: 使用方法
+7. contributing: コントリビューションに関する情報
+8. license: ライセンス情報
+
+見つからない情報については空文字列または空配列を返してください。技術スタックは単語のリストとして抽出してください。
+
+README内容:
+${content}
+
+JSON形式での回答のみ返してください：
+`;
+
+        const result = await miniAgent
+            .generate(promptText)
+            .then((res) => res.text);
+
+        console.log(result);
+
+        // JSONを抽出
+        const jsonMatch =
+            result.match(/```json\n([\s\S]*?)\n```/) ||
+            result.match(/\{[\s\S]*\}/);
+
+        if (jsonMatch) {
+            // JSONを抽出してパース
+            const jsonStr = jsonMatch[1] || jsonMatch[0];
+            const extractedData = JSON.parse(jsonStr);
+
+            // 必要なフィールドがあることを確認し、デフォルト値とマージ
+            return {
+                ...defaultMetadata,
+                ...extractedData,
+                // 技術スタックが文字列の場合は配列に変換
+                technologies: Array.isArray(extractedData.technologies)
+                    ? extractedData.technologies
+                    : typeof extractedData.technologies === "string"
+                      ? [extractedData.technologies]
+                      : defaultMetadata.technologies,
+            };
         }
+
+        // JSONの抽出に失敗した場合
+        console.warn(
+            "AIモデルからJSONを抽出できませんでした。デフォルト値を使用します。"
+        );
+        return defaultMetadata;
     } catch (error) {
-        // ファイルが存在しない場合は次のバリアントを試す
-        continue;
+        console.error(
+            "AIモデルによるメタデータ抽出中にエラーが発生しました:",
+            error
+        );
+        return defaultMetadata;
     }
 }
 ```
@@ -1017,6 +965,7 @@ export const tokeiAnalyzerTool = createTool({
         }
     },
 });
+```
 
 このツールを使うと、「このプロジェクトは主にどの言語で書かれていますか？」「全体のコード行数はどれくらいですか？」「適切にコメントは書かれていますか？」といった質問に、具体的な数字を用いて答えられるようになります。これは、プロジェクトの概要を把握する上で非常に役立ちます！
 
