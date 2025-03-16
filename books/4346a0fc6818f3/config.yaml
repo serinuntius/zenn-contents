@@ -7,7 +7,14 @@ price: 0 # 有料の場合200〜5000
 chapters:
     - introduction
     - getting-started
-    - workshop
+    - workshop-1-framework-basics
+    - workshop-2-ai-models
+    - workshop-3-github-tools
+    - workshop-4-code-analysis
+    - workshop-5-rag-system
+    - workshop-6-cheatsheet-tools
+    - workshop-7-agent-design
+    - workshop-8-complete-project
     - agents
     - workflows
     - rag

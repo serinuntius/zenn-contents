@@ -1,5 +1,5 @@
 ---
-title: "Agents（エージェントの基本機能）"
+title: "第11章：エージェントの基本機能"
 ---
 
 # エージェントの基本機能を探検しよう！ 🚀
@@ -19,20 +19,28 @@ Mastraエージェントは、ユーザーと対話しながらさまざまな�
 ```typescript
 import { Agent } from "@mastra/core/agent";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { anthropic } from "@ai-sdk/anthropic";
 
 // Google Gemini AIプロバイダーの作成
 const google = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_API_KEY || "",
 });
 
+// Geminiモデルのインスタンスを作成
+const geminiModel = google("gemini-2.0-flash-001");
+
 const chefAgent = new Agent({
   name: 'Chef Agent',
   instructions: 'あなたは経験豊富な家庭料理シェフのミシェルです。ユーザーが持っている食材と調理器具を理解し、実現可能なレシピを提案することを最優先してください。調理手順を明確に説明し、必要に応じて代替材料を提案してください。会話全体を通して、フレンドリーで励ましの態度を維持してください。',
-  model: google.getGenerativeModel({ model: "gemini-2.0-flash" }),
+  model: geminiModel,
+  memory: {
+    type: 'buffer',
+    maxMessages: 10
+  }
 });
 ```
 
-この例を見てください！ちょっとしたコードで、料理のエキスパートを生み出しています。指示は具体的かつ明確で、エージェントの「シェフミシェル」としての役割、優先事項（利用可能な食材と器具に基づいたレシピ提案）、対応スタイル（フレンドリーで励ましの態度）をしっかり定義しています。シェフミシェルは、まるで本物のシェフのように、あなたの冷蔵庫にある材料で最高の料理を提案してくれるでしょう！🍳
+このコードを見てください！GoogleのGemini Flash 2.0モデルを使って、エージェントの記憶力を実装しています。これにより、エージェントはユーザーの好みを記憶し、将来の会話でそれを思い出すことができます。この記憶力は、エージェントがより自然で親しみやすいコミュニケーションを提供するのに役立ちます。🔮
 
 ### 2. Model（モデル）- エージェントの頭脳 🧠
 
@@ -48,10 +56,10 @@ const google = createGoogleGenerativeAI({
 });
 
 // 最もコスパの良いジェミニモデル
-model: google.getGenerativeModel({ model: "gemini-2.0-flash" }),
+const geminiModel = google("gemini-2.0-flash-001");
 
 // または他のプロバイダも使用可能
-// model: anthropic("claude-3-5-sonnet-20241022"),
+const claudeModel = anthropic("claude-3-5-sonnet-20241022");
 ```
 
 たった数行のコードで、GoogleのGemini Flash 2.0モデルを呼び出せます。このモデルは処理速度、コスト、性能のバランスが非常に優れており、多くのユースケースに最適です。もちろん、必要に応じて他のモデルも利用できますが、まずはジェミニから始めることをお勧めします！✨
@@ -89,16 +97,20 @@ tools: {
 ```typescript
 import { Agent } from "@mastra/core/agent";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { anthropic } from "@ai-sdk/anthropic";
 
 // Google Gemini AIプロバイダーの作成
 const google = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_API_KEY || "",
 });
 
+// Geminiモデルのインスタンスを作成
+const geminiModel = google("gemini-2.0-flash-001");
+
 const memoryAgent = new Agent({
   name: 'Memory Agent',
   instructions: 'あなたはユーザーの好みを記憶するアシスタントです。ユーザーの好みについて言及されたら（好きな色、食べ物、映画など）、それをメモリに保存し、将来の会話で思い出してください。',
-  model: google.getGenerativeModel({ model: "gemini-2.0-flash" }),
+  model: geminiModel,
   memory: {
     type: 'buffer',
     maxMessages: 10
@@ -173,10 +185,32 @@ export const weatherTool = createTool({
 ```typescript
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { anthropic } from "@ai-sdk/anthropic";
+import { z } from "zod";
+import { Agent } from "@mastra/core/agent";
+import { createTool } from "@mastra/core/tools";
 
 // Google Gemini AIプロバイダーの作成
 const google = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_API_KEY || "",
+});
+
+// Geminiモデルのインスタンスを作成
+const geminiModel = google("gemini-2.0-flash-001");
+// Claudeモデルのインスタンスを作成
+const claudeModel = anthropic("claude-3-5-sonnet-20241022");
+
+// コピーライターエージェント
+const copywriterAgent = new Agent({
+  name: "コピーライターエージェント",
+  instructions: "あなたは優れたコピーライターです。魅力的でSEOに最適化されたブログ記事を書いてください。",
+  model: geminiModel
+});
+
+// 編集者エージェント
+const editorAgent = new Agent({
+  name: "編集者エージェント",
+  instructions: "あなたは厳格な編集者です。文法、スタイル、流れを改善し、コンテンツを洗練させてください。",
+  model: geminiModel
 });
 
 // コピーライターエージェントとそのツール
@@ -219,7 +253,7 @@ const editorTool = createTool({
 const publisherAgent = new Agent({
   name: "出版者エージェント",
   instructions: "あなたは出版者として、コピーライターエージェントにブログ記事を書かせ、次に編集者エージェントにその記事を編集させます。最終的に編集された記事を返してください。",
-  model: anthropic("claude-3-5-sonnet-20241022"),
+  model: claudeModel,
   tools: { copywriterTool, editorTool },
 });
 ```
@@ -236,10 +270,17 @@ const publisherAgent = new Agent({
 import { Agent } from "@mastra/core/agent";
 import { VoiceAdapter } from "@mastra/voice";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { anthropic } from "@ai-sdk/anthropic";
 
 const google = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_API_KEY || "",
 });
+
+// Geminiモデルのインスタンスを作成
+const geminiModel = google("gemini-2.0-flash-001");
+
+// Claudeモデルのインスタンスを作成
+const claudeModel = anthropic("claude-3-5-sonnet-20241022");
 
 const voiceAdapter = new VoiceAdapter({
   tts: {
@@ -256,7 +297,7 @@ const voiceAdapter = new VoiceAdapter({
 const voiceAssistantAgent = new Agent({
   name: "Voice Assistant",
   instructions: "あなたは音声アシスタントです。明確で簡潔な応答を心がけてください。",
-  model: google.getGenerativeModel({ model: "gemini-2.0-flash" }),
+  model: geminiModel,
   voice: voiceAdapter,
   tools: { /* 各種ツール */ }
 });

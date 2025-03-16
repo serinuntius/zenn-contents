@@ -1,5 +1,5 @@
 ---
-title: "Getting Started（はじめに）"
+title: "第2章：Getting Started - Mastra開発環境の構築"
 ---
 
 # Mastra開発への第一歩を踏み出そう！
