@@ -1,5 +1,5 @@
 ---
-title: "第11章：エージェントの基本機能"
+title: "第11章：エージェントの基本機能 (執筆中 🖋️)"
 ---
 
 # エージェントの基本機能を探検しよう！ 🚀
@@ -98,6 +98,7 @@ tools: {
 import { Agent } from "@mastra/core/agent";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { anthropic } from "@ai-sdk/anthropic";
+import { Memory } from "@mastra/memory";
 
 // Google Gemini AIプロバイダーの作成
 const google = createGoogleGenerativeAI({
@@ -107,14 +108,21 @@ const google = createGoogleGenerativeAI({
 // Geminiモデルのインスタンスを作成
 const geminiModel = google("gemini-2.0-flash-001");
 
+// メモリ設定
+const memory = new Memory({
+  options: {
+    lastMessages: 10, // 以前のmaxMessagesに相当
+    workingMemory: {
+      enabled: true // ワーキングメモリを有効化
+    }
+  }
+});
+
 const memoryAgent = new Agent({
   name: 'Memory Agent',
   instructions: 'あなたはユーザーの好みを記憶するアシスタントです。ユーザーの好みについて言及されたら（好きな色、食べ物、映画など）、それをメモリに保存し、将来の会話で思い出してください。',
   model: geminiModel,
-  memory: {
-    type: 'buffer',
-    maxMessages: 10
-  }
+  memory
 });
 ```
 
