@@ -29,7 +29,7 @@ AIモデルは、エージェントの「頭脳」とも言える重要な部分
 本書では便宜上 `Gemini` と `Claude(OpenRouter経由)` を設定しています。
 :::
 
-`src/models/index.ts` を開いて以下のコードを追加してください。
+`src/mastra/models/index.ts` を開いて以下のコードを追加してください。
 
 ```typescript
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
