@@ -22,6 +22,15 @@ AIモデルは、エージェントの「頭脳」とも言える重要な部分
 
 さっそく、複数のAIモデルを設定する実際のコードを見てみましょう！
 
+:::message
+ここでは複数のモデルを設定していますが、動作確認にはGoogleのAPI keyのみで十分です。
+
+基本的にはお好きなモデルを使っていただいて結構です。
+本書では便宜上 `Gemini` と `Claude(OpenRouter経由)` を設定しています。
+:::
+
+`src/models/index.ts` を開いて以下のコードを追加してください。
+
 ```typescript
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
@@ -144,7 +153,7 @@ OPENROUTER_API_KEY=あなたのOpenRouterAPIキーをここに
 
 ## 実践：モデルを切り替えてみよう🔄
 
-プロジェクトの途中でモデルを切り替えたくなった場合、index.tsから参照するファイルを変更するだけで簡単に切り替えられます。これがモデル設定を別ファイルにした利点の一つです！
+プロジェクトの途中でモデルを切り替えたくなった場合、`src/agents/index.ts`から参照するファイルを変更するだけで簡単に切り替えられます。これがモデル設定を別ファイルにした利点の一つです！
 
 例えば、エージェント定義で以下のように参照できます：
 
