@@ -34,7 +34,7 @@ import {
     vectorQueryTool,
     saveCheatsheetTool,
 } from "../tools";
-import { openRouter } from "../models";
+import { google } from "../models";
 
 // メモリの設定（LibSQLをストレージとベクターデータベースに使用）
 const memory = new Memory({
@@ -152,7 +152,7 @@ export const cursorRulesAgent = new Agent({
 これにより、トークン制限を回避して詳細なチートシートを作成できます。
 最初のセクション保存時はappend=falseで、それ以降のセクションはappend=trueで追記モードを使用してください。
 `,
-    model: openRouter,
+    model: google("gemini-2.0-flash-001"),
     tools: {
         cloneRepositoryTool,
         readmeAnalyzerTool,

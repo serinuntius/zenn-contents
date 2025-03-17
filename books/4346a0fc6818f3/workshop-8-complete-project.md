@@ -22,7 +22,6 @@ src
         │   ├── tokeiAnalyzer.ts
         │   └── treeAnalyzer.ts
         ├── cheatsheet
-        │   ├── index.ts
         │   └── saveCheatsheet.ts
         ├── github
         │   └── cloneRepository.ts
@@ -33,31 +32,6 @@ src
 ```
 
 驚くほどスッキリとした構造ですよね！各機能がきれいに整理されていて、一目でどのファイルが何をするのかがわかります。この明快な構造こそが、今後の拡張性を高め、メンテナンスを容易にする秘訣なんです。
-
-## ツールのエクスポート方法（tools/index.ts）でスマートに連携
-
-「バラバラのツールをどうやって一つのシステムとして動かすの？」と心配していましたか？大丈夫です！`tools/index.ts`ファイルが、その答えを教えてくれます。このファイルは、私たちが作った様々なツールをシンプルな形で提供してくれる、言わば「ツールの総合案内所」なんです。
-
-```typescript
-// GitHubツール
-export { cloneRepositoryTool } from "./github/cloneRepository";
-
-// 分析ツール
-export { readmeAnalyzerTool } from "./analysis/readmeAnalyzer";
-export { tokeiAnalyzerTool } from "./analysis/tokeiAnalyzer";
-export { treeAnalyzerTool } from "./analysis/treeAnalyzer";
-
-// RAGツール
-export { fileProcessorTool } from "./rag/fileProcessor";
-
-// ベクトルツール
-export { vectorQueryTool } from "./rag/vectorQuery";
-
-// チートシートツール
-export { saveCheatsheetTool } from "./cheatsheet";
-```
-
-このシンプルな仕組みのおかげで、各ツールを簡単に組み合わせることができるんです。例えば、「GitHubからリポジトリを取得して→READMEを解析して→チートシートを作成する」といった複雑な処理も、まるでレゴブロックを組み立てるように簡単に実現できます。これぞMastraフレームワークの真髄と言えるでしょう！
 
 ## さあ、マスターエージェントを実際に動かしてみよう！✨
 
