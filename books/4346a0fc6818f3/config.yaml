@@ -1,7 +1,7 @@
 title: "Mastraで作るAIエージェント入門"
 summary: "MastraというAIエージェント開発フレームワークを使って、GitHubリポジトリを解析するエージェントを開発する方法を解説します。初心者でも理解できるように基本から応用まで丁寧に説明し、実践的なプロジェクトを通じてAIエージェント開発のスキルを身につけることができます。"
 topics: ["AI", "エージェント", "Mastra", "GitHub", "自動化"]
-published: false
+published: true
 price: 0 # 有料の場合200〜5000
 # 本に含めるチャプターを順番に並べましょう
 chapters:
