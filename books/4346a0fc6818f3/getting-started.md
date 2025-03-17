@@ -27,6 +27,8 @@ Mastraの開発環境を一瞬で立ち上げるために、公式の便利コ�
 npm create mastra@latest
 # または
 yarn create mastra
+# または
+pnpm create mastra
 ```
 
 すると、親切なウィザードが色々質問してきます。難しくないので楽しんで進めましょう。
@@ -117,14 +119,14 @@ Ok to proceed? (y) y
 
 ### APIキーの設定
 
-プロジェクトが準備できたら、最後にAPIキーを設定しましょう。プロジェクト内の`.env`ファイルを開いて、自分のAPIキーを書き込んでください。
+プロジェクトが準備できたら、最後にAPIキーを設定しましょう。プロジェクト内の`.env.development`ファイルを開いて、自分のAPIキーを書き込んでください。
 
 ```
 # Googleジェミニの例
-GOOGLE_GENERATIVE_AI_API_KEY=あなたのGoogleジェミニAPIキー
+GOOGLE_API_KEY=あなたのGoogleジェミニAPIキー
 ```
 
-絶対にGitHubなどにアップしないよう注意！`.env`はちゃんと`.gitignore`に含まれているはずですが、一応確認してくださいね。
+絶対にGitHubなどにアップしないよう注意！`.env.development`はちゃんと`.gitignore`に含まれているはずですが、一応確認してくださいね。
 
 ### 開発サーバーを動かしてみよう
 

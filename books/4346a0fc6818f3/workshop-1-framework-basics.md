@@ -10,12 +10,9 @@ title: "第3章：Mastraフレームワークの基礎（index.ts）"
 
 Mastraプロジェクトにおいて、**index.ts**ファイルは文字通り「すべての始まり」です。このファイルはプロジェクト全体の設定を担う司令塔のような役割を果たします。エージェントの登録、ワークフローの設定、ログの管理など、Mastraの重要な機能をここで初期化します。
 
-さっそくサンプルコードを見てみましょう！
-
 ```typescript
 import { Mastra } from "@mastra/core/mastra";
 import { createLogger } from "@mastra/core/logger";
-import { cursorRulesWorkflow } from "./workflows";
 import { cursorRulesAgent } from "./agents";
 
 export const mastra = new Mastra({
@@ -29,7 +26,7 @@ export const mastra = new Mastra({
 });
 ```
 
-このコード、たった10数行ですが、驚くほど多くのことを実現しています！一つずつ見ていきましょう。
+一つずつ見ていきましょう。
 
 ## コードの詳細解説 - 何をしているの？🔍
 
@@ -44,7 +41,6 @@ import { cursorRulesAgent } from "./agents";
 最初の部分では、必要な「材料」を集めています：
 - `Mastra` - フレームワークの本体
 - `createLogger` - ログを記録するための機能
-- `cursorRulesWorkflow` - 後で作成するワークフロー
 - `cursorRulesAgent` - 後で作成するエージェント
 
 これらのコンポーネントが、これから作るAIエージェントの基盤となります！
@@ -96,11 +92,13 @@ logger: createLogger({
 
 次の章では、AIモデルの設定と活用方法について学んでいきます。さまざまなAIモデル（Google Gemini、Claude、OpenAIなど）の設定方法やAPIキーの管理、モデル選択の基準について詳しく解説します。
 
-> 📘 **完全なコードを確認したい方へ**
-> 
-> 本書で開発するGitHubリポジトリ解析エージェントの完全な実装は、以下のリポジトリで確認できます：
-> [https://github.com/serinuntius/github-cursor-rules-agent](https://github.com/serinuntius/github-cursor-rules-agent)
-> 
-> このリポジトリには、本書の各章で説明するすべてのコードが実際に動作する形で含まれています。学習の参考にご活用ください。
+:::message
+**完全なコードを確認したい方へ**
+
+本書で開発するGitHubリポジトリ解析エージェントの完全な実装は、以下のリポジトリで確認できます：
+[https://github.com/serinuntius/github-cursor-rules-agent](https://github.com/serinuntius/github-cursor-rules-agent)
+
+このリポジトリには、本書の各章で説明するすべてのコードが実際に動作する形で含まれています。学習の参考にご活用ください。
+:::
 
 準備はいいですか？次のステップに進みましょう！🚀 
