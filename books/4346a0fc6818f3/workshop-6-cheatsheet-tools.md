@@ -435,13 +435,6 @@ for (let i = 0; i < topics.length; i++) {
     const prompt = `Pythonの${topics[i]}についてのチートシートを生成してください。`;
     
     const response = await cheatsheetAgent.generate(prompt);
-    
-    await cheatsheetAgent.runTool("saveCheatsheetTool", {
-        content: response.text,
-        outputPath: "./cheatsheets/python_complete.md",
-        section: topics[i],
-        append: i > 0,
-    });
 }
 ```
 
@@ -464,12 +457,6 @@ ${existingContent}
 `;
 
 const response = await cheatsheetAgent.generate(prompt);
-
-// 更新されたチートシートを保存
-await cheatsheetAgent.runTool("saveCheatsheetTool", {
-    content: response.text,
-    outputPath: "./cheatsheets/api_reference_updated.md",
-});
 ```
 
 ## まとめ 🎯
@@ -481,3 +468,25 @@ RAGツールと組み合わせれば、プロジェクト固有の知識に基�
 チートシートは学習の強力な味方です。複雑な概念や構文を簡潔にまとめることで、開発の効率化と知識の定着に大いに役立ちます。このツールを活用して、あなたの開発ライフをもっと便利にしてみませんか？
 
 次のチャプターでは、これまで学んだツールやエージェントを組み合わせて、より複雑な実用的なシステムを構築する方法を探っていきましょう。Mastraフレームワークの可能性は無限大です！ 
+
+## tools/index.ts を追加
+今までに作成したツールをまとめてインポートできるようにします。
+
+```typescript
+// GitHubツール
+export { cloneRepositoryTool } from "./github/cloneRepository";
+
+// 分析ツール
+export { readmeAnalyzerTool } from "./analysis/readmeAnalyzer";
+export { tokeiAnalyzerTool } from "./analysis/tokeiAnalyzer";
+export { treeAnalyzerTool } from "./analysis/treeAnalyzer";
+
+// RAGツール
+export { fileProcessorTool } from "./rag/fileProcessor";
+
+// ベクトルツール
+export { vectorQueryTool } from "./rag/vectorQuery";
+
+// チートシートツール
+export { saveCheatsheetTool } from "./cheatsheet/saveCheatsheet";
+```
