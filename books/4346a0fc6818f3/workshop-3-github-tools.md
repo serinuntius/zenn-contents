@@ -16,7 +16,7 @@ GitHubリポジトリをクローンするツールを作ることで、エー�
 
 ## GitHubリポジトリクローンツールの実装 👨‍💻
 
-まずは、GitHubリポジトリをクローンするツールのコードを見てみましょう。このコードは`src/mastra/tools/github-clone-tool.ts`として保存します：
+まずは、GitHubリポジトリをクローンするツールのコードを見てみましょう。このコードは`src/mastra/tools/github/cloneRepository.ts`として保存します：
 
 ```typescript
 import { createTool } from "@mastra/core/tools";
